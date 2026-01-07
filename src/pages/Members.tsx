@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Members.css';
-import DomeGallery from '../components/gallery/DomeGallery';
+import ResponsiveGallery from '../components/gallery/ResponsiveGallery';
 import Footer from '../components/layout/Footer';
 import ScrollReveal from '../components/scroll/ScrollReveal';
 import { SearchInput, FilterDropdown, Toolbar } from '../components/ui';
@@ -60,7 +60,7 @@ export default function Members() {
 
                 <ScrollReveal direction="up" delay={0.2}>
                     <section className="members-gallery">
-                        <DomeGallery
+                        <ResponsiveGallery
                             autoRotate={true}
                             autoRotateSpeed={0.05}
                             grayscale={false}

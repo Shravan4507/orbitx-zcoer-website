@@ -1,5 +1,5 @@
 import './MembersGlimpse.css';
-import DomeGallery from '../../../components/gallery/DomeGallery';
+import ResponsiveGallery from '../../../components/gallery/ResponsiveGallery';
 
 export default function MembersGlimpse() {
     return (
@@ -9,7 +9,7 @@ export default function MembersGlimpse() {
                 <p className="members-glimpse__subheading">The People Behind OrbitX</p>
             </div>
             <div className="members-glimpse__container">
-                <DomeGallery
+                <ResponsiveGallery
                     overlayBlurColor="#000000"
                     grayscale={false}
                     imageBorderRadius="20px"
@@ -19,6 +19,7 @@ export default function MembersGlimpse() {
                     maxVerticalRotationDeg={0}
                     autoRotate={true}
                     autoRotateSpeed={0.05}
+                    maxItems={12}
                 />
             </div>
         </section>

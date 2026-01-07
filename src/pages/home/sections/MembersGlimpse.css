@@ -50,7 +50,7 @@
 
 @media (max-width: 768px) {
     .members-glimpse {
-        padding: 4rem 1.5rem;
+        padding: 4rem 1rem;
     }
 
     .members-glimpse__heading {
@@ -63,14 +63,17 @@
 
     .members-glimpse__container {
         width: 100%;
-        max-width: 600px;
-        height: 350px;
+        max-width: 100%;
+        height: auto;
+        min-height: 400px;
+        border-radius: 24px;
+        padding: 0.5rem;
     }
 }
 
 @media (max-width: 480px) {
     .members-glimpse {
-        padding: 3rem 1rem;
+        padding: 3rem 0.5rem;
     }
 
     .members-glimpse__heading {
@@ -78,6 +81,7 @@
     }
 
     .members-glimpse__container {
-        height: 300px;
+        min-height: 350px;
+        border-radius: 20px;
     }
 }
