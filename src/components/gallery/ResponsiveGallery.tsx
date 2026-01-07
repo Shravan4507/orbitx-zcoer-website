@@ -22,6 +22,7 @@ interface ResponsiveGalleryProps {
     teamFilter?: string;
     // Mobile-specific
     maxItems?: number;
+    showExploreMore?: boolean;
 }
 
 export default function ResponsiveGallery({
@@ -36,7 +37,8 @@ export default function ResponsiveGallery({
     minRadius = 600,
     searchQuery = '',
     teamFilter = '',
-    maxItems
+    maxItems,
+    showExploreMore = false
 }: ResponsiveGalleryProps) {
     const [isMobile, setIsMobile] = useState(false);
 
@@ -56,6 +58,7 @@ export default function ResponsiveGallery({
                 searchQuery={searchQuery}
                 teamFilter={teamFilter}
                 maxItems={maxItems}
+                showExploreMore={showExploreMore}
             />
         );
     }
@@ -76,3 +79,4 @@ export default function ResponsiveGallery({
         />
     );
 }
+

@@ -20,6 +20,7 @@ export default function MembersGlimpse() {
                     autoRotate={true}
                     autoRotateSpeed={0.05}
                     maxItems={12}
+                    showExploreMore={true}
                 />
             </div>
         </section>
