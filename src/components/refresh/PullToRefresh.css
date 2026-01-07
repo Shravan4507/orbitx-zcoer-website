@@ -1,0 +1,49 @@
+.pull-to-refresh {
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
+}
+
+.pull-to-refresh__indicator {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(169, 78, 255, 0.1);
+    border: 1px solid rgba(169, 78, 255, 0.2);
+    border-radius: 50%;
+    z-index: 10;
+    transition: opacity 0.15s ease;
+}
+
+.pull-to-refresh__indicator svg {
+    width: 18px;
+    height: 18px;
+    color: #a94eff;
+}
+
+.pull-to-refresh__indicator--refreshing {
+    animation: refreshSpin 0.8s linear infinite;
+}
+
+@keyframes refreshSpin {
+    from {
+        transform: translateX(-50%) rotate(0deg);
+    }
+
+    to {
+        transform: translateX(-50%) rotate(360deg);
+    }
+}
+
+.pull-to-refresh__content {
+    transition: transform 0.2s ease;
+    will-change: transform;
+}

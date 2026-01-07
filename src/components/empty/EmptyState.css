@@ -1,0 +1,77 @@
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 2rem;
+    animation: emptyStateEnter 0.4s ease;
+}
+
+@keyframes emptyStateEnter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.empty-state__icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 50%;
+}
+
+.empty-state__icon svg {
+    width: 36px;
+    height: 36px;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.empty-state__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0 0 0.5rem 0;
+}
+
+.empty-state__description {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 0;
+    max-width: 300px;
+    line-height: 1.5;
+}
+
+.empty-state--compact {
+    padding: 2rem 1.5rem;
+}
+
+.empty-state--compact .empty-state__icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 1rem;
+}
+
+.empty-state--compact .empty-state__icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+.empty-state--compact .empty-state__title {
+    font-size: 1.1rem;
+}
+
+.empty-state--compact .empty-state__description {
+    font-size: 0.85rem;
+}

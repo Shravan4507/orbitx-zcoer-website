@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap');
+
+:root {
+    --font-family: 'Berkshire Swash', serif;
+}
+
+.events-teaser {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 6rem 2rem;
+    z-index: 1;
+}
+
+.events-teaser__header {
+    text-align: center;
+    max-width: 700px;
+    margin-bottom: 3rem;
+}
+
+.events-teaser__heading {
+    font-size: 4rem;
+    font-weight: 600;
+    font-family: var(--font-family);
+    color: #a94eff;
+    margin: 0 0 1rem 0;
+    letter-spacing: -0.02em;
+}
+
+.events-teaser__subtext {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.7;
+    margin: 0;
+}
+
+.events-teaser__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    max-width: 1200px;
+    width: 100%;
+    margin-bottom: 3rem;
+}
+
+.events-teaser__cta {
+    font-size: 1.4rem;
+    font-weight: 400;
+    font-family: var(--font-family);
+    color: #f0ff7c;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.events-teaser__cta:hover {
+    opacity: 0.8;
+}
+
+.events-teaser__cta:active {
+    transform: scale(0.98);
+}
+
+.events-teaser__loading,
+.events-teaser__empty {
+    padding: 4rem 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.events-teaser__empty p {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.events-teaser__empty span {
+    font-size: 0.95rem;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .events-teaser__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .events-teaser__heading {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .events-teaser {
+        padding: 4rem 1rem;
+    }
+
+    .events-teaser__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .events-teaser__heading {
+        font-size: 2.5rem;
+    }
+
+    .events-teaser__subtext {
+        font-size: 1rem;
+    }
+}

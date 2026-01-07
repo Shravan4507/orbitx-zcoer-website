@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap');
+
+.join-cta {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 50vh;
+    padding: 1rem 2rem;
+    overflow: hidden;
+    margin-top: -2rem;
+}
+
+.join-cta__glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 400px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.join-cta__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 700px;
+}
+
+.join-cta__heading {
+    font-size: 3.5rem;
+    font-weight: 600;
+    font-family: 'Berkshire Swash', serif;
+    color: #a94eff;
+    margin: 0 0 1.25rem 0;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.join-cta__subheading {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 0 2.5rem 0;
+    line-height: 1.6;
+    max-width: 550px;
+}
+
+.join-cta__buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.join-cta__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.1rem 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 9999px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    will-change: transform;
+}
+
+.join-cta__btn--primary {
+    background: rgba(255, 255, 255, 0);
+    font-family: 'Berkshire Swash', serif;
+    color: #4eff51;
+}
+
+.join-cta__btn--primary:active {
+    transform: scale(0.98);
+}
+
+.join-cta__btn--secondary {
+    background: rgba(255, 255, 255, 0);
+    color: rgba(255, 255, 255, 0.9);
+    border: none;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+}
+
+.join-cta__btn--secondary:active {
+    transform: scale(0.98);
+}
+
+@media (max-width: 768px) {
+    .join-cta {
+        padding: 4rem 1.5rem;
+        min-height: 40vh;
+    }
+
+    .join-cta__heading {
+        font-size: 2.5rem;
+    }
+
+    .join-cta__subheading {
+        font-size: 1.1rem;
+    }
+
+    .join-cta__glow {
+        width: 400px;
+        height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .join-cta {
+        padding: 3rem 1rem;
+    }
+
+    .join-cta__heading {
+        font-size: 2rem;
+    }
+
+    .join-cta__subheading {
+        font-size: 1rem;
+    }
+
+    .join-cta__buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .join-cta__btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

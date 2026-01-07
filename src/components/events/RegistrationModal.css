@@ -1,0 +1,333 @@
+/* ===== Registration Modal Overlay ===== */
+.registration-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2500;
+    padding: 1.5rem;
+    animation: regOverlayFadeIn 0.2s ease;
+}
+
+.registration-modal-overlay--closing {
+    animation: regOverlayFadeOut 0.2s ease forwards;
+}
+
+@keyframes regOverlayFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes regOverlayFadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+/* ===== Modal Container ===== */
+.registration-modal {
+    width: 100%;
+    max-width: 540px;
+    max-height: 90vh;
+    background: rgba(0, 0, 0, 0.334);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: regModalSlideUp 0.25s ease;
+}
+
+.registration-modal--closing {
+    animation: regModalSlideDown 0.2s ease forwards;
+}
+
+@keyframes regModalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes regModalSlideDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+}
+
+/* ===== Header ===== */
+.registration-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.registration-modal__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+}
+
+.registration-modal__close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.5);
+    transition: color 0.15s ease;
+}
+
+.registration-modal__close:hover {
+    color: #fff;
+}
+
+.registration-modal__close svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ===== Content ===== */
+.registration-modal__content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* ===== Event Info ===== */
+.registration-modal__event-info {
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 34px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.registration-modal__event-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+    flex: 1;
+    min-width: 200px;
+}
+
+.registration-modal__event-date {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+}
+
+.registration-modal__event-fee {
+    padding: 0.35rem 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4eff9f;
+    background: rgba(78, 255, 159, 0.1);
+    border-radius: 24px;
+}
+
+/* ===== Section ===== */
+.registration-modal__section {
+    margin-bottom: 1.5rem;
+}
+
+.registration-modal__section-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 1rem 0;
+}
+
+/* ===== Form Fields ===== */
+.registration-modal__field {
+    margin-bottom: 1rem;
+}
+
+.registration-modal__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.registration-modal__label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.4rem;
+}
+
+.registration-modal__input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    outline: none;
+    transition: border-color 0.15s ease;
+    font-family: inherit;
+}
+
+.registration-modal__input:focus {
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.registration-modal__input--readonly {
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.7);
+    cursor: not-allowed;
+}
+
+.registration-modal__input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.registration-modal__id-detected {
+    display: inline-block;
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    color: #4ecdc4;
+}
+
+.registration-modal__hint {
+    margin: 0.4rem 0 0 0;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* ===== Terms Checkbox ===== */
+.registration-modal__terms {
+    margin-bottom: 1.25rem;
+}
+
+.registration-modal__checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.registration-modal__checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: #4ecdc4;
+    cursor: pointer;
+}
+
+.registration-modal__checkbox-text {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+}
+
+.registration-modal__checkbox-text a {
+    color: #4ecdc4;
+    text-decoration: none;
+}
+
+/* ===== Error Message ===== */
+.registration-modal__error {
+    margin: 0 0 1rem 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.1);
+    border-radius: 8px;
+}
+
+/* ===== Action Buttons ===== */
+.registration-modal__actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.registration-modal__btn {
+    flex: 1;
+    padding: 0.85rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+    font-family: inherit;
+}
+
+.registration-modal__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.registration-modal__btn--register {
+    background: #4eff9f;
+    color: #0a0a0a;
+}
+
+.registration-modal__btn--pay {
+    background: #ffd93d;
+    color: #0a0a0a;
+}
+
+.registration-modal__btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+    .registration-modal {
+        max-height: 95vh;
+        border-radius: 16px;
+    }
+
+    .registration-modal__row {
+        grid-template-columns: 1fr;
+    }
+
+    .registration-modal__content {
+        padding: 1.25rem;
+    }
+
+    .registration-modal__event-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

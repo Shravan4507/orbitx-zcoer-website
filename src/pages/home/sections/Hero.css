@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap');
+
+
+@keyframes heroFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    width: 100%;
+    padding: 2rem;
+    z-index: 1;
+}
+
+.hero__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 1000px;
+    padding: 3rem 4rem;
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    border: none;
+    border-radius: 2rem;
+    animation: heroFadeIn 1s ease-out forwards;
+}
+
+.hero__logo-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: -1rem;
+}
+
+.hero__logo {
+    height: 430px;
+    width: auto;
+    object-fit: contain;
+    filter: blur(0.1px);
+    -webkit-filter: blur(0.1px);
+    animation: heroFadeIn 1s ease-out 0.2s both;
+}
+
+.hero__headline {
+    font-size: 3rem;
+    font-weight: 700;
+    font-family: 'Berkshire Swash', serif;
+    color: #fff;
+    line-height: 1.2;
+    margin: 0 0 1.5rem 0;
+    letter-spacing: -0.01em;
+    animation: heroFadeIn 1s ease-out 0.4s both;
+}
+
+.hero__subheading {
+    font-size: 1.125rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.77);
+    line-height: 1.7;
+    margin: 0;
+    max-width: 600px;
+    animation: heroFadeIn 1s ease-out 0.6s both;
+}
+
+@keyframes arrowBounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(6px);
+    }
+}
+
+.hero__scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    animation: heroFadeIn 1s ease-out 1s both;
+}
+
+.hero__arrow {
+    width: 28px;
+    height: 28px;
+    color: rgba(255, 255, 255, 0.4);
+    animation: arrowBounce 2s ease-in-out infinite;
+    transition: color 0.2s ease;
+}
+
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 1.5rem;
+    }
+
+    .hero__container {
+        padding: 2rem 1.5rem;
+        border-radius: 1.5rem;
+    }
+
+    .hero__logo {
+        height: 90px;
+    }
+
+    .hero__headline {
+        font-size: 2rem;
+    }
+
+    .hero__subheading {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero__container {
+        padding: 1.5rem 1rem;
+        border-radius: 1rem;
+    }
+
+    .hero__logo {
+        height: 70px;
+    }
+
+    .hero__headline {
+        font-size: 1.5rem;
+    }
+
+    .hero__subheading {
+        font-size: 0.9rem;
+    }
+}

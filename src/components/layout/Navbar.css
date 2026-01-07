@@ -1,0 +1,209 @@
+.navbar {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 2rem;
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+    z-index: 1000;
+}
+
+.navbar__logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border-radius: 9999px;
+    background: rgb(5, 6, 5);
+    backdrop-filter: blur(100px);
+    -webkit-backdrop-filter: blur(100px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    z-index: 3;
+}
+
+.navbar__logo-img {
+    height: 90px;
+    width: auto;
+    object-fit: contain;
+}
+
+.navbar__links {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+}
+
+.navbar__links--left {
+    margin-right: auto;
+    padding-right: 3rem;
+}
+
+.navbar__links--right {
+    margin-left: auto;
+    padding-left: 3rem;
+}
+
+.navbar__item {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar__link {
+    display: block;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.781);
+    text-decoration: none;
+    border-radius: 9999px;
+    letter-spacing: 0.05em;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.navbar__link:hover {
+    color: #fff;
+}
+
+.navbar__link:active {
+    transform: scale(0.98);
+    transition: transform 0.2s ease;
+}
+
+/* Join item with tooltip */
+.navbar__item--join {
+    position: relative;
+}
+
+.navbar__link--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.navbar__link--disabled:hover {
+    color: rgba(255, 255, 255, 0.781);
+}
+
+.navbar__tooltip {
+    position: absolute;
+    top: calc(100% + 0.75rem);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    white-space: nowrap;
+    z-index: 100;
+    animation: tooltipFadeIn 0.2s ease;
+}
+
+.navbar__tooltip::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar__tooltip span {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #fff;
+}
+
+.navbar__tooltip-sub {
+    font-size: 0.75rem !important;
+    font-weight: 400 !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@media (max-width: 900px) {
+    .navbar {
+        padding: 0.5rem 1.25rem;
+    }
+
+    .navbar__links {
+        gap: 0;
+    }
+
+    .navbar__links--left {
+        padding-right: 2.5rem;
+    }
+
+    .navbar__links--right {
+        padding-left: 2.5rem;
+    }
+
+    .navbar__link {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 700px) {
+    .navbar {
+        top: 10px;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar__logo-img {
+        height: 40px;
+    }
+
+    .navbar__links--left {
+        padding-right: 2rem;
+    }
+
+    .navbar__links--right {
+        padding-left: 2rem;
+    }
+
+    .navbar__link {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* Hide navbar on mobile - use bottom nav instead */
+@media (max-width: 768px) {
+    .navbar {
+        display: none;
+    }
+}

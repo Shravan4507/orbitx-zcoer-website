@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap');
+
+/* ===== Card Container ===== */
+.event-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 34px;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.event-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.event-card--past {
+    opacity: 0.6;
+}
+
+.event-card--past:hover {
+    opacity: 0.8;
+}
+
+/* ===== Card Image ===== */
+.event-card__image {
+    width: 100%;
+    height: 160px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+}
+
+.event-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===== Card Content ===== */
+.event-card__content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1.5rem;
+}
+
+/* ===== Tag/Badge ===== */
+.event-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.event-card__tag {
+    display: inline-block;
+    width: fit-content;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    border-radius: 9999px;
+    color: #f0ff7c;
+    background: rgba(240, 255, 124, 0.1);
+}
+
+/* ===== Price Indicator ===== */
+.event-card__price {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: 24px;
+    cursor: default;
+}
+
+/* Price Tier Colors */
+.event-card__price--free {
+    color: #4eff9f;
+    background: rgba(78, 255, 159, 0.12);
+}
+
+.event-card__price--low {
+    color: #4ecdc4;
+    background: rgba(78, 205, 196, 0.12);
+}
+
+.event-card__price--medium {
+    color: #ffd93d;
+    background: rgba(255, 217, 61, 0.12);
+}
+
+.event-card__price--high {
+    color: #ff9f4e;
+    background: rgba(255, 159, 78, 0.12);
+}
+
+.event-card__price--premium {
+    color: #f472b6;
+    background: rgba(244, 114, 182, 0.12);
+}
+
+.event-card__tag--past {
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.event-card__badge--workshop {
+    background: rgba(78, 255, 159, 0.1);
+    color: #4eff9f;
+}
+
+.event-card__badge--talk {
+    background: rgba(78, 159, 255, 0.1);
+    color: #4e9fff;
+}
+
+.event-card__badge--competition {
+    background: rgba(255, 159, 78, 0.1);
+    color: #ff9f4e;
+}
+
+.event-card__badge--outreach {
+    background: rgba(169, 78, 255, 0.1);
+    color: #a94eff;
+}
+
+/* ===== Title & Description ===== */
+.event-card__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.3;
+}
+
+.event-card__desc {
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.6;
+    margin: 0 0 1rem 0;
+}
+
+/* ===== Footer ===== */
+.event-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+/* ===== Status ===== */
+.event-card__status {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.event-card__status--open {
+    color: #4eff9f;
+}
+
+.event-card__status--closed {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.event-card__status--registered {
+    color: #4eff9f;
+}
+
+/* ===== CTA Button ===== */
+.event-card__cta {
+    padding: 0.1rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Berkshire Swash', serif;
+    color: #7cff62;
+    background: transparent;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.event-card__cta:active {
+    transform: scale(0.98);
+}
+
+.event-card__cta--disabled,
+.event-card__cta:disabled {
+    color: rgba(255, 255, 255, 0.3);
+    cursor: not-allowed;
+}
+
+.event-card__cta--disabled:active,
+.event-card__cta:disabled:active {
+    transform: none;
+}
+
+.event-card__cta--download {
+    color: #4eff9f;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+    .event-card {
+        padding: 1.5rem;
+    }
+
+    .event-card__title {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .event-card__footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .event-card__cta {
+        width: 100%;
+        text-align: center;
+    }
+}

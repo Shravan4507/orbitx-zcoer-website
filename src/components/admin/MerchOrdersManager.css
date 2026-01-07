@@ -1,0 +1,352 @@
+.orders-manager {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 8rem 2rem 4rem;
+}
+
+.manager-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    max-width: 800px;
+}
+
+.manager-header h1 {
+    font-size: 3rem;
+    font-family: 'Berkshire Swash', serif;
+    color: #a94eff;
+    margin-bottom: 0.5rem;
+}
+
+.manager-header p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.1rem;
+}
+
+.manager-toolbar {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 2rem;
+}
+
+.manager-stats {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.stat {
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.stat strong {
+    color: #fff;
+    margin-right: 0.25rem;
+}
+
+.stat--pending strong {
+    color: #f59e0b;
+}
+
+.stat--shipped strong {
+    color: #3b82f6;
+}
+
+.manager-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.export-btn {
+    padding: 0.6rem 1.2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.export-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #a94eff;
+}
+
+.manager-content {
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 2rem;
+    min-height: 600px;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 800px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.order-card {
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.order-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.order-card.active {
+    background: rgba(169, 78, 255, 0.1);
+    border-color: #a94eff;
+}
+
+.order-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.order-id {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.order-status {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 6px;
+}
+
+.status--pending {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+}
+
+.status--confirmed {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.status--processing {
+    background: rgba(169, 78, 255, 0.2);
+    color: #a94eff;
+}
+
+.status--shipped {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+}
+
+.status--delivered {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+}
+
+.status--cancelled {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.customer-name {
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.order-total {
+    color: #a94eff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.order-date {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.order-detail {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    height: fit-content;
+    position: sticky;
+    top: 8rem;
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-detail {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.detail-section h3 {
+    font-size: 1rem;
+    color: #a94eff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+.detail-section p {
+    margin-bottom: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.order-items {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    padding: 1.25rem;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.order-summary {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.summary-row.total {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 0.5rem;
+}
+
+.action-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.action-group label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.btn-group button {
+    padding: 0.4rem 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-group button:hover {
+    border-color: #a94eff;
+    background: rgba(169, 78, 255, 0.1);
+}
+
+.btn-cancel:hover {
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+}
+
+.btn-failed:hover {
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+}
+
+.btn-delete-order {
+    margin-top: 1rem;
+    background: transparent;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    padding: 0.75rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-delete-order:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+}
+
+@media (max-width: 1024px) {
+    .manager-content {
+        grid-template-columns: 1fr;
+    }
+
+    .order-detail {
+        position: fixed;
+        inset: 2rem;
+        z-index: 1000;
+        top: 2rem;
+        margin: 0;
+        max-width: none;
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .manager-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

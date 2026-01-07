@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrbitX - Redirecting...</title>
+    <script>
+        // GitHub Pages SPA Redirect
+        // This script handles client-side routing on GitHub Pages
+        // When a 404 occurs, it redirects to index.html with the path as a query param
+        const pathSegmentsToKeep = 0; // For user sites (username.github.io)
+        
+        const location = window.location;
+        const path = location.pathname.slice(1);
+        const search = location.search;
+        const hash = location.hash;
+        
+        // Redirect to index.html with the path stored in sessionStorage
+        sessionStorage.setItem('gh-pages-redirect', path + search + hash);
+        location.replace(location.origin + '/');
+    </script>
+</head>
+<body>
+    <noscript>
+        <meta http-equiv="refresh" content="0;URL='/'">
+    </noscript>
+</body>
+</html>

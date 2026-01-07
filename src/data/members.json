@@ -1,0 +1,592 @@
+{
+    "members": [
+        {
+            "id": "president",
+            "firstName": "Gauri",
+            "lastName": "Kshirsagar",
+            "dateOfBirth": "18 May 2004",
+            "team": "Leadership",
+            "position": "President",
+            "academics": {
+                "year": "4th Year",
+                "branch": "Computer Engineering",
+                "division": "B",
+                "yearOfGraduation": "2026"
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "Gauri.jpg"
+        },
+        {
+            "id": "chairman",
+            "firstName": "Antriksh",
+            "lastName": "Shah",
+            "dateOfBirth": "22 Dec 2004",
+            "team": "Leadership",
+            "position": "Chairman",
+            "academics": {
+                "year": "4th Year",
+                "branch": "Computer Engineering",
+                "division": "C",
+                "yearOfGraduation": "2026"
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "Antriksh.jpeg"
+        },
+        {
+            "id": "secretary",
+            "firstName": "Devashree",
+            "lastName": "Pate",
+            "dateOfBirth": "26 Oct 2004",
+            "team": "Leadership",
+            "position": "Secretary",
+            "academics": {
+                "year": "4th Year",
+                "branch": "Computer Engineering",
+                "division": "A",
+                "yearOfGraduation": "2026"
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "Devashree.jpg"
+        },
+        {
+            "id": "treasurer",
+            "firstName": "Vivek",
+            "lastName": "Jadhav",
+            "dateOfBirth": "18 Aug 2004",
+            "team": "Leadership",
+            "position": "Treasurer",
+            "academics": {
+                "year": "4th Year",
+                "branch": "Computer Engineering",
+                "division": "B",
+                "yearOfGraduation": "2026"
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "Vivek.jpg"
+        },
+        {
+            "id": "co_treasurer",
+            "firstName": "Asmit",
+            "lastName": "Rajaramkar",
+            "dateOfBirth": "27 Aug 2006",
+            "team": "Leadership",
+            "position": "Co-Treasurer",
+            "academics": {
+                "year": "2nd Year",
+                "branch": "Computer Engineering",
+                "division": "C",
+                "yearOfGraduation": "2028"
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "Asmit.png"
+        },
+        {
+            "id": "technical_lead",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Technical Team",
+            "position": "Team Leader",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "technical_lead.jpg"
+        },
+        {
+            "id": "technical_member_1",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Technical Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "technical_member_1.jpg"
+        },
+        {
+            "id": "technical_member_2",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Technical Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "technical_member_2.jpg"
+        },
+        {
+            "id": "technical_member_3",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Technical Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "technical_member_3.jpg"
+        },
+        {
+            "id": "public_outreach_lead",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Public Outreach Team",
+            "position": "Team Leader",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "public_outreach_lead.jpg"
+        },
+        {
+            "id": "public_outreach_member_1",
+            "firstName": "Vidhita",
+            "lastName": "Kirtani",
+            "dateOfBirth": "26 Nov 2005",
+            "team": "Public Outreach Team",
+            "position": "Member",
+            "academics": {
+                "year": "2nd Year",
+                "branch": "Computer Engineering",
+                "division": "B",
+                "yearOfGraduation": "2028"
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "Vidhita.png"
+        },
+        {
+            "id": "public_outreach_member_2",
+            "firstName": "Shravan",
+            "lastName": "Ghuge",
+            "dateOfBirth": "04 Feb 2005",
+            "team": "Public Outreach Team",
+            "position": "Member",
+            "academics": {
+                "year": "3rd Year",
+                "branch": "Computer Engineering",
+                "division": "A",
+                "yearOfGraduation": "2027"
+            },
+            "socialLinks": {
+                "instagram": "https://www.instagram.com/shravan45x/",
+                "linkedin": "",
+                "github": "https://github.com/shravan4507",
+                "twitter": "https://x.com/shravan45z"
+            },
+            "image": "Shravan.png"
+        },
+        {
+            "id": "documentation_lead",
+            "firstName": "Janhavi",
+            "lastName": "Danve",
+            "dateOfBirth": "17 Oct 2005",
+            "team": "Documentation Team",
+            "position": "Team Leader",
+            "academics": {
+                "year": "3rd Year",
+                "branch": "Computer Engineering",
+                "division": "A",
+                "yearOfGraduation": "2027"
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "Janhavi.png"
+        },
+        {
+            "id": "documentation_member_1",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Documentation Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "documentation_member_1.jpg"
+        },
+        {
+            "id": "documentation_member_2",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Documentation Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "documentation_member_2.jpg"
+        },
+        {
+            "id": "social_media_lead",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Social Media & Editing Team",
+            "position": "Team Leader",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "social_media_lead.jpg"
+        },
+        {
+            "id": "social_media_member_1",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Social Media & Editing Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "social_media_member_1.jpg"
+        },
+        {
+            "id": "social_media_member_2",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Social Media & Editing Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "social_media_member_2.jpg"
+        },
+        {
+            "id": "social_media_member_3",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Social Media & Editing Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "social_media_member_3.jpg"
+        },
+        {
+            "id": "design_innovation_lead",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Design & Innovation Team",
+            "position": "Team Leader",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "design_innovation_lead.jpg"
+        },
+        {
+            "id": "design_innovation_member_1",
+            "firstName": "Sampada",
+            "lastName": "Bari",
+            "dateOfBirth": "02 Feb 2006",
+            "team": "Design & Innovation Team",
+            "position": "Member",
+            "academics": {
+                "year": "2nd Year",
+                "branch": "Computer Engineering",
+                "division": "A",
+                "yearOfGraduation": "2028"
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "Sampada.webp"
+        },
+        {
+            "id": "design_innovation_member_2",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Design & Innovation Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "design_innovation_member_2.jpg"
+        },
+        {
+            "id": "design_innovation_member_3",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Design & Innovation Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "design_innovation_member_3.jpg"
+        },
+        {
+            "id": "management_operations_lead",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Management & Operations Team",
+            "position": "Team Leader",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "management_operations_lead.jpg"
+        },
+        {
+            "id": "management_operations_member_1",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Management & Operations Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "management_operations_member_1.jpg"
+        },
+        {
+            "id": "management_operations_member_2",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Management & Operations Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "management_operations_member_2.jpg"
+        },
+        {
+            "id": "management_operations_member_3",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Management & Operations Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "management_operations_member_3.jpg"
+        },
+        {
+            "id": "management_operations_member_4",
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "",
+            "team": "Management & Operations Team",
+            "position": "Member",
+            "academics": {
+                "year": "",
+                "branch": "",
+                "division": "",
+                "yearOfGraduation": ""
+            },
+            "socialLinks": {
+                "instagram": "",
+                "linkedin": "",
+                "github": "",
+                "twitter": ""
+            },
+            "image": "management_operations_member_4.jpg"
+        }
+    ]
+}

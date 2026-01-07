@@ -1,0 +1,84 @@
+.copy-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.copy-button:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.copy-button:active {
+    transform: scale(0.98);
+}
+
+.copy-button__label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.copy-button__text {
+    font-size: 0.85rem;
+    font-family: monospace;
+    font-weight: 600;
+    color: #a94eff;
+    letter-spacing: 0.5px;
+}
+
+.copy-button__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.copy-button__icon svg {
+    width: 14px;
+    height: 14px;
+    color: rgba(255, 255, 255, 0.4);
+    transition: color 0.2s ease;
+}
+
+.copy-button:hover .copy-button__icon svg {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.copy-button__icon--copied svg {
+    color: #4ade80 !important;
+}
+
+.copy-button__feedback {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.25rem 0.5rem;
+    background: rgba(74, 222, 128, 0.15);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #4ade80;
+    white-space: nowrap;
+    animation: feedbackPop 0.2s ease;
+}
+
+@keyframes feedbackPop {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}

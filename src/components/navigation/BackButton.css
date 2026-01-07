@@ -1,0 +1,63 @@
+.global-back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: fixed;
+    top: 2rem;
+    left: 2rem;
+    z-index: 1000;
+    opacity: 1;
+    pointer-events: all;
+}
+
+.global-back-button:hover:not(:disabled) {
+    transform: translateX(-2px);
+}
+
+.global-back-button:active:not(:disabled) {
+    transform: translateX(-4px) scale(0.98);
+}
+
+.global-back-button svg {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s ease;
+}
+
+.global-back-button:hover:not(:disabled) svg {
+    transform: translateX(-2px);
+}
+
+/* Hidden state when no history */
+.global-back-button--hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-10px);
+}
+
+.global-back-button:disabled {
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .global-back-button {
+        width: 42px;
+        height: 42px;
+        top: 1.5rem;
+        left: 1rem;
+    }
+
+    .global-back-button svg {
+        width: 16px;
+        height: 16px;
+    }
+}

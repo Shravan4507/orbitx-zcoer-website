@@ -1,0 +1,364 @@
+.settings-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 2000;
+    overflow-y: auto;
+    animation: settingsOverlayFadeIn 0.3s ease;
+}
+
+.settings-overlay--closing {
+    animation: settingsOverlayFadeOut 0.3s ease forwards;
+}
+
+@keyframes settingsOverlayFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes settingsOverlayFadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.settings-overlay__modal {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 34px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    animation: settingsModalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.settings-overlay--closing .settings-overlay__modal {
+    animation: settingsModalSlideOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes settingsModalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes settingsModalSlideOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+}
+
+.settings-overlay__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.settings-overlay__close svg {
+    width: 18px;
+    height: 18px;
+    color: rgba(255, 255, 255, 0.6);
+    transition: color 0.2s ease;
+}
+
+.settings-overlay__close:active {
+    transform: scale(0.95);
+}
+
+.settings-overlay__close:hover svg {
+    color: #fff;
+}
+
+.settings-overlay__header {
+    margin-bottom: 1.5rem;
+}
+
+.settings-overlay__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+}
+
+.settings-overlay__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.settings-overlay__section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.settings-overlay__section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+}
+
+.settings-overlay__section-desc {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+}
+
+.settings-overlay__language-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.settings-overlay__language-btn {
+    padding: 0.7rem 0.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.settings-overlay__language-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.settings-overlay__language-btn--active {
+    background: rgba(169, 78, 255, 0.15);
+    border-color: rgba(169, 78, 255, 0.4);
+    color: #a94eff;
+}
+
+.settings-overlay__language-btn:active {
+    transform: scale(0.98);
+}
+
+.settings-overlay__section--danger {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.settings-overlay__section--danger .settings-overlay__section-title {
+    color: #f87171;
+}
+
+.settings-overlay__delete-btn {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    border-radius: 24px;
+    color: #f87171;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.settings-overlay__delete-btn:hover {
+    background: rgba(248, 113, 113, 0.15);
+}
+
+.settings-overlay__delete-btn:active {
+    transform: scale(0.98);
+}
+
+.settings-overlay__delete-confirm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.settings-overlay__delete-info {
+    padding: 1rem;
+    background: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    border-radius: 12px;
+}
+
+.settings-overlay__delete-warning {
+    font-size: 0.9rem;
+    color: #f87171;
+    margin: 0 0 0.75rem 0;
+    font-weight: 600;
+}
+
+.settings-overlay__delete-details {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    line-height: 1.6;
+}
+
+.settings-overlay__delete-details strong {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.settings-overlay__confirm-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.settings-overlay__confirm-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.settings-overlay__confirm-label strong {
+    color: #f87171;
+}
+
+.settings-overlay__confirm-input {
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    border-radius: 14px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.settings-overlay__confirm-input:focus {
+    border-color: rgba(248, 113, 113, 0.6);
+}
+
+.settings-overlay__confirm-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 0;
+    font-weight: 400;
+}
+
+.settings-overlay__confirm-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.settings-overlay__delete-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.settings-overlay__cancel-delete {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.settings-overlay__cancel-delete:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.settings-overlay__cancel-delete:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.settings-overlay__cancel-delete:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.settings-overlay__confirm-delete {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: #f87171;
+    border: none;
+    border-radius: 24px;
+    color: #000;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.settings-overlay__confirm-delete:hover:not(:disabled) {
+    background: #ef4444;
+}
+
+.settings-overlay__confirm-delete:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.settings-overlay__confirm-delete:disabled {
+    background: rgba(248, 113, 113, 0.4);
+    color: rgba(0, 0, 0, 0.5);
+    cursor: not-allowed;
+}
+
+.settings-overlay__close:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+    .settings-overlay__modal {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .settings-overlay__language-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .settings-overlay__delete-actions {
+        flex-direction: column;
+    }
+}
