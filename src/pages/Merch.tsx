@@ -429,6 +429,14 @@ export default function Merch() {
             )
             }
 
+            {/* Cart Drawer Overlay - Click to close */}
+            {isCartOpen && (
+                <div
+                    className="merch-cart-overlay"
+                    onClick={() => setIsCartOpen(false)}
+                />
+            )}
+
             <div className={`merch-cart-drawer ${isCartOpen ? 'merch-cart-drawer--open' : ''}`}>
                 <div className="merch-cart-drawer__header">
                     <h3>Your Cart ({cartItemCount})</h3>
