@@ -180,7 +180,32 @@ export default function EventsTeaser() {
                     isClosing={isClosing}
                     onClose={handleClose}
                     isRegistered={registeredEventIds.has(selectedEvent.id)}
-                    onDownloadPass={() => navigate('/events')}
+                    onDownloadPass={async (event) => {
+                        try {
+                            // Get user orbitId
+                            const user = auth.currentUser;
+                            if (!user) return;
+
+                            let userDoc = await getDoc(doc(db, 'users', user.uid));
+                            if (!userDoc.exists()) {
+                                userDoc = await getDoc(doc(db, 'admins', user.uid));
+                            }
+
+                            const orbitId = userDoc.data()?.orbitId;
+                            if (orbitId) {
+                                // Dynamic import of eventPass service
+                                const { checkExistingRegistration, generatePassPdfForRegistration, downloadPass: triggerDownload } = await import('../../../services/firebase/eventPass');
+
+                                const reg = await checkExistingRegistration(event.id, orbitId);
+                                if (reg) {
+                                    const pdfBlob = await generatePassPdfForRegistration(reg, event.venue);
+                                    triggerDownload(pdfBlob, event.title, orbitId);
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Error downloading pass:', error);
+                        }
+                    }}
                     onRegisterClick={() => navigate('/events')}
                 />
             )}
