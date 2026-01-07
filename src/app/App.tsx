@@ -1,5 +1,5 @@
 import './App.css'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import AdaptiveGalaxy from '../components/background/AdaptiveGalaxy'
 import Navbar from '../components/layout/Navbar'
 import MobileNav from '../components/layout/MobileNav'
@@ -46,7 +46,7 @@ function JoinRoute() {
 
 function AppContent() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AdaptiveGalaxy />
       <ScrollToTop />
       <BackButton />
@@ -105,7 +105,7 @@ function AppContent() {
         } />
       </Routes>
       <MobileNav />
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
