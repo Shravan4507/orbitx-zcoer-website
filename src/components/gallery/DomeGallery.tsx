@@ -85,18 +85,25 @@ type ItemDef = {
 
 // Transform members JSON data to ImageItem format
 const transformMembersToImages = (members: MemberData[]): ImageItem[] => {
+    // Get base URL from Vite (handles GitHub Pages subdirectory)
+    const baseUrl = import.meta.env.BASE_URL || '/';
+
     return members
         .filter(m => m.firstName && m.lastName) // Only include members with names
         .map(member => {
-            // Handle image path - if it's just a filename, prepend /members/
+            // Handle image path - if it's just a filename, prepend base + /members/
             // If it's a full path or URL, use as-is
             let imageSrc = '';
             if (member.image) {
-                if (member.image.startsWith('http') || member.image.startsWith('/')) {
+                if (member.image.startsWith('http')) {
+                    // External URL - use as-is
                     imageSrc = member.image;
+                } else if (member.image.startsWith('/')) {
+                    // Absolute path - prepend base URL
+                    imageSrc = baseUrl + member.image.slice(1);
                 } else {
                     // Just filename - serve from public/members folder
-                    imageSrc = `/members/${member.image}`;
+                    imageSrc = `${baseUrl}members/${member.image}`;
                 }
             }
 
