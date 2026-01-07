@@ -24,10 +24,13 @@
   <script>
     // Handle redirect from 404.html
     (function () {
+      const basePath = '/orbitx-zcoer-website';
       const redirect = sessionStorage.getItem('gh-pages-redirect');
       if (redirect) {
         sessionStorage.removeItem('gh-pages-redirect');
-        window.history.replaceState(null, null, '/' + redirect);
+        // Construct the full path with base
+        const newPath = basePath + (redirect.startsWith('/') ? redirect : '/' + redirect);
+        window.history.replaceState(null, null, newPath);
       }
     })();
   </script>

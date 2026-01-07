@@ -5,8 +5,8 @@ import path from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  // Base path for GitHub Pages - use '/' for custom domain or '/repo-name/' for github.io
-  base: '/',
+  // Base path for GitHub Pages - must match repo name for github.io subdirectory
+  base: '/orbitx-zcoer-website/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
