@@ -12,7 +12,7 @@ export default function Navbar() {
     const lastClickTimeRef = useRef(0);
     const [showJoinTooltip, setShowJoinTooltip] = useState(false);
 
-    // Easter egg: 5 clicks on logo triggers snowfall
+    // Easter egg: 3 clicks on logo triggers snowfall
     const handleLogoClick = (e: React.MouseEvent) => {
         const now = Date.now();
 
@@ -24,8 +24,8 @@ export default function Navbar() {
         clickCountRef.current++;
         lastClickTimeRef.current = now;
 
-        if (clickCountRef.current >= 5) {
-            e.preventDefault(); // Don't navigate on the 5th click
+        if (clickCountRef.current >= 3) {
+            e.preventDefault(); // Don't navigate on the 3rd click
             toggleSnow();
             clickCountRef.current = 0; // Reset counter
         }
