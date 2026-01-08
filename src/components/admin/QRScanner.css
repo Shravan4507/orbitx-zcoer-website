@@ -1,0 +1,803 @@
+/* ===== QR Scanner Styles ===== */
+
+.qr-scanner {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a0a0f 0%, #1a1a25 100%);
+    color: #fff;
+}
+
+/* ===== Header ===== */
+
+.qr-scanner__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.qr-scanner__back-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.qr-scanner__back-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.qr-scanner__title {
+    flex: 1;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.qr-scanner__attendance-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.qr-scanner__attendance-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.qr-scanner__close-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.5);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.qr-scanner__close-btn:hover {
+    color: #fff;
+}
+
+/* ===== Event Selection ===== */
+
+.qr-scanner__select-event {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.qr-scanner__select-event h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 1.5rem 0;
+    text-align: center;
+}
+
+.qr-scanner__loading,
+.qr-scanner__empty {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 3rem;
+}
+
+.qr-scanner__events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.qr-scanner__event-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.qr-scanner__event-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.qr-scanner__event-card:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.qr-scanner__event-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.qr-scanner__event-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.qr-scanner__event-date {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.qr-scanner__event-count {
+    font-size: 0.85rem;
+    color: #4eff9f;
+    font-weight: 500;
+}
+
+.qr-scanner__downloading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.qr-scanner__spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #4eff9f;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===== Event Dashboard ===== */
+
+.qr-scanner__dashboard {
+    flex: 1;
+    padding: 1.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.qr-scanner__event-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.qr-scanner__event-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+}
+
+.qr-scanner__event-header p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+}
+
+/* Volunteer Management */
+
+.qr-scanner__volunteers-section {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.qr-scanner__volunteers-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+}
+
+.qr-scanner__volunteers-hint {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 0 0 1rem 0;
+}
+
+.qr-scanner__volunteer-input-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.qr-scanner__volunteer-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    outline: none;
+}
+
+.qr-scanner__volunteer-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.qr-scanner__volunteer-input:focus {
+    border-color: rgba(78, 255, 159, 0.5);
+}
+
+.qr-scanner__volunteer-add-btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #000;
+    background: linear-gradient(135deg, #4eff9f 0%, #7cff62 100%);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.qr-scanner__volunteer-add-btn:hover:not(:disabled) {
+    transform: scale(1.02);
+}
+
+.qr-scanner__volunteer-add-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.qr-scanner__volunteers-list h4 {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 0.75rem 0;
+}
+
+.qr-scanner__volunteer-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.qr-scanner__volunteer-item:last-child {
+    border-bottom: none;
+}
+
+.qr-scanner__volunteer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.qr-scanner__volunteer-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.qr-scanner__volunteer-orbitid {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.qr-scanner__volunteer-remove {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: rgba(255, 78, 78, 0.7);
+    background: rgba(255, 78, 78, 0.1);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.qr-scanner__volunteer-remove:hover {
+    color: #ff4e4e;
+    background: rgba(255, 78, 78, 0.2);
+}
+
+/* Dashboard Actions */
+
+.qr-scanner__dashboard-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.qr-scanner__start-scan-btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #000;
+    background: linear-gradient(135deg, #4eff9f 0%, #7cff62 100%);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.qr-scanner__start-scan-btn:hover:not(:disabled) {
+    transform: scale(1.02);
+}
+
+.qr-scanner__start-scan-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.qr-scanner__view-attendance-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.qr-scanner__view-attendance-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* ===== Scanning View ===== */
+
+.qr-scanner__scanning {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+.qr-scanner__reader {
+    flex: 1;
+    max-height: 400px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+}
+
+/* Override html5-qrcode styles */
+.qr-scanner__reader #qr-reader {
+    border: none !important;
+}
+
+.qr-scanner__reader #qr-reader__scan_region {
+    background: transparent !important;
+}
+
+.qr-scanner__reader #qr-reader__header_message {
+    display: none !important;
+}
+
+.qr-scanner__reader #qr-reader__dashboard_section_swaplink {
+    display: none !important;
+}
+
+.qr-scanner__reader video {
+    border-radius: 12px;
+}
+
+.qr-scanner__stats-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    margin-top: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+}
+
+.qr-scanner__stat {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.qr-scanner__stat-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+}
+
+.qr-scanner__stat-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4eff9f;
+}
+
+.qr-scanner__sync-indicator {
+    font-size: 0.75rem;
+}
+
+.qr-scanner__pending-badge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    color: #ffd93d;
+    background: rgba(255, 217, 61, 0.1);
+    border-radius: 8px;
+}
+
+.qr-scanner__last-scan {
+    padding: 0.75rem 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(78, 255, 159, 0.08);
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* ===== Result View ===== */
+
+.qr-scanner__result {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+}
+
+.qr-scanner__result-icon {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+}
+
+.qr-scanner__result--valid .qr-scanner__result-icon {
+    background: rgba(78, 255, 159, 0.1);
+    color: #4eff9f;
+    border: 2px solid rgba(78, 255, 159, 0.3);
+}
+
+.qr-scanner__result--already-scanned .qr-scanner__result-icon {
+    background: rgba(255, 217, 61, 0.1);
+    color: #ffd93d;
+    border: 2px solid rgba(255, 217, 61, 0.3);
+}
+
+.qr-scanner__result--invalid .qr-scanner__result-icon,
+.qr-scanner__result--error .qr-scanner__result-icon {
+    background: rgba(255, 78, 78, 0.1);
+    color: #ff4e4e;
+    border: 2px solid rgba(255, 78, 78, 0.3);
+}
+
+.qr-scanner__result-info {
+    margin-bottom: 1rem;
+}
+
+.qr-scanner__result-name {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+}
+
+.qr-scanner__result-orbitid {
+    font-size: 1.1rem;
+    color: #a94eff;
+    margin: 0 0 0.5rem 0;
+}
+
+.qr-scanner__result-college {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+}
+
+.qr-scanner__result-status {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.qr-scanner__result-message {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 2rem;
+}
+
+.qr-scanner__result-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 300px;
+}
+
+.qr-scanner__mark-btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #000;
+    background: linear-gradient(135deg, #4eff9f 0%, #7cff62 100%);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.qr-scanner__mark-btn:hover {
+    transform: scale(1.02);
+}
+
+.qr-scanner__mark-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.qr-scanner__next-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.qr-scanner__next-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* ===== Attendance List Overlay ===== */
+
+.qr-scanner__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: flex-end;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.qr-scanner__attendance-panel {
+    width: 100%;
+    max-height: 85vh;
+    background: #14141a;
+    border-radius: 24px 24px 0 0;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.qr-scanner__attendance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.qr-scanner__attendance-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.qr-scanner__attendance-header button {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.5);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.qr-scanner__attendance-filters {
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.qr-scanner__search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    outline: none;
+}
+
+.qr-scanner__search-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.qr-scanner__filter-btns {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.qr-scanner__filter-btns button {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.qr-scanner__filter-btns button.active {
+    color: #4eff9f;
+    background: rgba(78, 255, 159, 0.1);
+    border-color: rgba(78, 255, 159, 0.3);
+}
+
+.qr-scanner__attendance-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem 1.5rem;
+}
+
+.qr-scanner__attendance-item {
+    display: grid;
+    grid-template-columns: 24px 1fr auto auto;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.qr-scanner__attendance-status {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.qr-scanner__attendance-item.checked-in .qr-scanner__attendance-status {
+    color: #4eff9f;
+}
+
+.qr-scanner__attendance-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.qr-scanner__attendance-orbitid {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.qr-scanner__attendance-time {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-align: right;
+}
+
+.qr-scanner__attendance-item.checked-in .qr-scanner__attendance-time {
+    color: #4eff9f;
+}
+
+.qr-scanner__attendance-summary {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ===== Responsive ===== */
+
+@media (min-width: 768px) {
+    .qr-scanner__attendance-panel {
+        max-width: 500px;
+        margin: 0 auto;
+        max-height: 90vh;
+        border-radius: 24px;
+        margin-bottom: 2rem;
+    }
+
+    .qr-scanner__overlay {
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .qr-scanner__header {
+        padding: 0.75rem 1rem;
+    }
+
+    .qr-scanner__title {
+        font-size: 1rem;
+    }
+
+    .qr-scanner__select-event {
+        padding: 1.5rem;
+    }
+
+    .qr-scanner__result-name {
+        font-size: 1.5rem;
+    }
+
+    .qr-scanner__attendance-item {
+        grid-template-columns: 20px 1fr auto;
+    }
+
+    .qr-scanner__attendance-orbitid {
+        display: none;
+    }
+}

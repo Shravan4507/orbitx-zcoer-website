@@ -253,6 +253,9 @@ export const ADMIN_PERMISSIONS = {
     MANAGE_MERCH: 'manage_merch',
     MANAGE_MERCH_ORDERS: 'manage_merch_orders',
     SYSTEM_SETTINGS: 'system_settings',
+
+    // Event Scanner
+    SCAN_QR: 'scan_qr',
 } as const;
 
 export type AdminPermission = typeof ADMIN_PERMISSIONS[keyof typeof ADMIN_PERMISSIONS];

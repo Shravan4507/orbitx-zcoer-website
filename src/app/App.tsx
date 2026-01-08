@@ -21,6 +21,8 @@ import ApplicationsManager from '../components/admin/ApplicationsManager'
 import ManageQueries from '../components/admin/ManageQueries'
 import MerchOrdersManager from '../components/admin/MerchOrdersManager'
 import MerchManager from '../components/admin/MerchManager'
+import EventScanner from '../pages/EventScanner'
+import ScanQRs from '../pages/ScanQRs'
 import { ToastProvider } from '../components/toast/Toast'
 import { AuthProvider } from '../contexts/AuthContext'
 import { SnowfallProvider } from '../contexts/SnowfallContext'
@@ -101,6 +103,16 @@ function AppContent() {
         <Route path="/manage-merch" element={
           <ProtectedRoute>
             <MerchManager />
+          </ProtectedRoute>
+        } />
+        <Route path="/event-scanner" element={
+          <ProtectedRoute>
+            <EventScanner />
+          </ProtectedRoute>
+        } />
+        <Route path="/scan-qrs" element={
+          <ProtectedRoute>
+            <ScanQRs />
           </ProtectedRoute>
         } />
       </Routes>

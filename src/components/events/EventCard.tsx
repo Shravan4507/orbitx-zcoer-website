@@ -12,9 +12,8 @@ const getDefaultBadgeClass = (type: string): string => {
     }
 };
 
-// Get display tag based on event status
+// Get display tag based on event type (always show type, not "Past")
 const getTag = (event: EventData): string => {
-    if (event.isPast) return 'Past';
     return event.type || 'Event';
 };
 
@@ -94,7 +93,7 @@ export default function EventCard({ event, onClick, variant = 'full', getTypeBad
 
     return (
         <div
-            className={`event-card ${event.isPast ? 'event-card--past' : ''}`}
+            className="event-card"
             onClick={handleClick}
         >
             <div className="event-card__image">
@@ -104,7 +103,7 @@ export default function EventCard({ event, onClick, variant = 'full', getTypeBad
             </div>
             <div className="event-card__content">
                 <div className="event-card__header">
-                    <span className={`event-card__tag ${event.isPast ? 'event-card__tag--past' : getBadgeClass(event.type)}`}>
+                    <span className={`event-card__tag ${getBadgeClass(event.type)}`}>
                         {getTag(event)}
                     </span>
                     <span className={`event-card__price ${getPriceTierClass(event.amount)}`}>

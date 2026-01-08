@@ -177,6 +177,24 @@
 }
 
 /* Admin Manage Dropdown */
+/* Volunteer Scanner Button */
+.sidebar-action-btn--volunteer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, rgba(78, 255, 159, 0.1) 0%, rgba(124, 255, 98, 0.08) 100%);
+    border: 1px solid rgba(78, 255, 159, 0.3);
+    color: #4eff9f;
+    font-weight: 500;
+}
+
+.sidebar-action-btn--volunteer:hover {
+    background: linear-gradient(135deg, rgba(78, 255, 159, 0.15) 0%, rgba(124, 255, 98, 0.12) 100%);
+    border-color: rgba(78, 255, 159, 0.5);
+    color: #7cff62;
+}
+
 .manage-dropdown {
     position: relative;
     width: 100%;
