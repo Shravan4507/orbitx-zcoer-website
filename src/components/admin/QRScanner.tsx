@@ -1,17 +1,16 @@
 /**
- * QR Scanner Admin Component
+ * QR Scanner Admin Component - v2
  * 
- * Full-featured QR scanner for event check-in:
- * - Event selection with offline download
- * - Camera QR scanning
- * - Attendance marking
+ * Features:
+ * - Camera selection (front/rear)
+ * - Auto-mark attendance on valid scan
  * - Offline support with sync
- * - Attendance list overlay
  * - Volunteer management
+ * - Modern UI with animations
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Html5QrcodeScanner, Html5QrcodeScanType } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import { useToast } from '../toast/Toast';
 import {
     getEventsForScanning,
@@ -42,6 +41,11 @@ interface QRScannerProps {
     onClose?: () => void;
 }
 
+interface CameraDevice {
+    id: string;
+    label: string;
+}
+
 type ViewState = 'select-event' | 'event-dashboard' | 'scanning' | 'result';
 
 export default function QRScanner({ adminOrbitId, onClose }: QRScannerProps) {
@@ -54,10 +58,15 @@ export default function QRScanner({ adminOrbitId, onClose }: QRScannerProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
 
+    // Camera state
+    const [cameras, setCameras] = useState<CameraDevice[]>([]);
+    const [selectedCameraId, setSelectedCameraId] = useState<string | null>(null);
+    const [isCameraReady, setIsCameraReady] = useState(false);
+
     // Scanning state
     const [scanResult, setScanResult] = useState<ScanResult | null>(null);
-    const [lastScannedReg, setLastScannedReg] = useState<CachedRegistration | null>(null);
-    const [isMarkingAttendance, setIsMarkingAttendance] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [lastScannedName, setLastScannedName] = useState<string | null>(null);
 
     // Stats
     const [stats, setStats] = useState({ total: 0, attended: 0 });
@@ -76,24 +85,37 @@ export default function QRScanner({ adminOrbitId, onClose }: QRScannerProps) {
     const [isAssigningVolunteer, setIsAssigningVolunteer] = useState(false);
 
     // Scanner ref
-    const scannerRef = useRef<Html5QrcodeScanner | null>(null);
-    const scannerContainerRef = useRef<HTMLDivElement>(null);
+    const scannerRef = useRef<Html5Qrcode | null>(null);
+    const autoResumeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     // Initialize and load events
     useEffect(() => {
         const init = async () => {
             setIsLoading(true);
-            try {
-                await initializeScannerService();
-                const eventsList = await getEventsForScanning();
-                setEvents(eventsList);
-            } catch (error) {
-                console.error('Error loading events:', error);
-                showToast('Failed to load events', 'error');
-            }
+            await initializeScannerService();
+            const eventsList = await getEventsForScanning();
+            setEvents(eventsList);
             setIsLoading(false);
         };
         init();
+    }, []);
+
+    // Get cameras on mount
+    useEffect(() => {
+        Html5Qrcode.getCameras().then((devices) => {
+            const cams = devices.map(d => ({ id: d.id, label: d.label || `Camera ${d.id.slice(0, 8)}` }));
+            setCameras(cams);
+            // Prefer rear camera
+            const rearCam = cams.find(c =>
+                c.label.toLowerCase().includes('back') ||
+                c.label.toLowerCase().includes('rear') ||
+                c.label.toLowerCase().includes('environment')
+            );
+            setSelectedCameraId(rearCam?.id || cams[0]?.id || null);
+        }).catch(err => {
+            console.error('Camera access error:', err);
+            showToast('Camera access denied', 'error');
+        });
     }, [showToast]);
 
     // Online/offline listener
@@ -102,7 +124,7 @@ export default function QRScanner({ adminOrbitId, onClose }: QRScannerProps) {
             setIsOnline(true);
             syncPendingAttendance().then(({ synced }) => {
                 if (synced > 0) {
-                    showToast(`Synced ${synced} attendance records`, 'success');
+                    showToast(`Synced ${synced} records`, 'success');
                     updatePendingCount();
                 }
             });
@@ -132,16 +154,14 @@ export default function QRScanner({ adminOrbitId, onClose }: QRScannerProps) {
         }
     }, [selectedEvent]);
 
-    // Handle event selection - go to dashboard first
+    // Handle event selection
     const handleSelectEvent = async (event: EventForScanning) => {
         setSelectedEvent(event);
         setViewState('event-dashboard');
 
-        // Load volunteers
         const vols = await getVolunteersForEvent(event.id);
         setVolunteers(vols);
 
-        // Check cache status
         const isValid = await isCacheValid(event.id);
         if (isValid) {
             const meta = await getCacheMetadata(event.id);
@@ -152,7 +172,7 @@ export default function QRScanner({ adminOrbitId, onClose }: QRScannerProps) {
         }
     };
 
-    // Handle assign volunteer
+    // Assign volunteer
     const handleAssignVolunteer = async () => {
         if (!selectedEvent || !volunteerInput.trim()) return;
 
@@ -169,31 +189,28 @@ export default function QRScanner({ adminOrbitId, onClose }: QRScannerProps) {
         if (result.success && result.volunteer) {
             setVolunteers(prev => [...prev, result.volunteer!]);
             setVolunteerInput('');
-            showToast('Volunteer assigned successfully!', 'success');
+            showToast('Volunteer assigned!', 'success');
         } else {
-            showToast(result.error || 'Failed to assign volunteer', 'error');
+            showToast(result.error || 'Failed to assign', 'error');
         }
     };
 
-    // Handle remove volunteer
+    // Remove volunteer
     const handleRemoveVolunteer = async (volunteerId: string) => {
         const success = await removeVolunteer(volunteerId);
         if (success) {
             setVolunteers(prev => prev.filter(v => v.id !== volunteerId));
             showToast('Volunteer removed', 'info');
-        } else {
-            showToast('Failed to remove volunteer', 'error');
         }
     };
 
-    // Start scanning (from dashboard)
+    // Start scanning
     const handleStartScanning = async () => {
         if (!selectedEvent) return;
 
-        // Check if we have valid cache
+        // Ensure cache exists
         const isValid = await isCacheValid(selectedEvent.id);
         if (!isValid) {
-            // Download registrations
             setIsDownloading(true);
             const result = await downloadAndCacheRegistrations(selectedEvent.id, selectedEvent.title);
             setIsDownloading(false);
@@ -210,84 +227,133 @@ export default function QRScanner({ adminOrbitId, onClose }: QRScannerProps) {
         setViewState('scanning');
     };
 
-    // Initialize QR scanner
+    // Initialize camera scanner
     useEffect(() => {
-        if (viewState === 'scanning' && scannerContainerRef.current && !scannerRef.current) {
-            const scanner = new Html5QrcodeScanner(
-                'qr-reader',
+        if (viewState === 'scanning' && selectedCameraId && !scannerRef.current) {
+            const scanner = new Html5Qrcode('qr-reader');
+            scannerRef.current = scanner;
+
+            scanner.start(
+                selectedCameraId,
                 {
                     fps: 10,
-                    qrbox: { width: 250, height: 250 },
-                    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
-                    rememberLastUsedCamera: true,
+                    qrbox: { width: 280, height: 280 },
+                    aspectRatio: 1.0,
                 },
-                false
-            );
-
-            scanner.render(
                 async (decodedText) => {
-                    // Pause scanner while processing
-                    scanner.pause();
+                    if (isProcessing) return;
                     await handleScan(decodedText);
                 },
-                (error) => {
-                    // Ignore scan errors (no QR found)
-                    console.debug('Scan error:', error);
-                }
-            );
-
-            scannerRef.current = scanner;
+                () => { } // Ignore scan errors
+            ).then(() => {
+                setIsCameraReady(true);
+            }).catch(err => {
+                console.error('Scanner start error:', err);
+                showToast('Failed to start camera', 'error');
+            });
         }
 
         return () => {
+            if (autoResumeTimerRef.current) {
+                clearTimeout(autoResumeTimerRef.current);
+            }
+        };
+    }, [viewState, selectedCameraId, isProcessing]);
+
+    // Cleanup scanner on unmount or view change
+    useEffect(() => {
+        return () => {
             if (scannerRef.current) {
-                scannerRef.current.clear().catch(console.error);
+                scannerRef.current.stop().catch(() => { });
                 scannerRef.current = null;
             }
         };
     }, [viewState]);
 
-    // Handle QR scan
+    // Handle QR scan - AUTO MARK ATTENDANCE
     const handleScan = async (qrData: string) => {
-        if (!selectedEvent) return;
+        if (!selectedEvent || isProcessing) return;
 
+        setIsProcessing(true);
+
+        // Pause scanner
+        if (scannerRef.current) {
+            await scannerRef.current.pause(true);
+        }
+
+        // Verify QR
         const result = await verifyQrCode(qrData, selectedEvent.id);
         setScanResult(result);
         setViewState('result');
 
-        if (result.registration) {
-            setLastScannedReg(result.registration);
+        // AUTO-MARK if valid
+        if (result.status === 'valid' && result.registration) {
+            const markResult = await markAttendance(result.registration.qrSignature, adminOrbitId);
+
+            if (markResult.success) {
+                // Vibrate for feedback
+                if (navigator.vibrate) navigator.vibrate(100);
+
+                setLastScannedName(`${result.registration.firstName} ${result.registration.lastName}`);
+                await updateStats();
+                await updatePendingCount();
+
+                // Update result to show marked
+                setScanResult({
+                    ...result,
+                    message: '✓ Attendance marked successfully!',
+                });
+            } else {
+                setScanResult({
+                    success: false,
+                    status: 'error',
+                    registration: result.registration,
+                    message: 'Failed to mark attendance. Try again.',
+                });
+            }
+        } else if (result.status === 'already-scanned') {
+            // Vibrate warning
+            if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
         }
+
+        setIsProcessing(false);
+
+        // Auto-resume after 2 seconds
+        autoResumeTimerRef.current = setTimeout(() => {
+            handleScanNext();
+        }, 2500);
     };
 
-    // Mark attendance
-    const handleMarkAttendance = async () => {
-        if (!scanResult?.registration) return;
-
-        setIsMarkingAttendance(true);
-        const result = await markAttendance(scanResult.registration.qrSignature, adminOrbitId);
-        setIsMarkingAttendance(false);
-
-        if (result.success) {
-            showToast('Attendance marked successfully!', 'success');
-            setLastScannedReg(result.registration || null);
-            await updateStats();
-            await updatePendingCount();
-        } else {
-            showToast('Failed to mark attendance', 'error');
-        }
-
-        // Return to scanning
-        handleScanNext();
-    };
-
-    // Continue to next scan
+    // Continue scanning
     const handleScanNext = () => {
+        if (autoResumeTimerRef.current) {
+            clearTimeout(autoResumeTimerRef.current);
+        }
         setScanResult(null);
         setViewState('scanning');
+
         if (scannerRef.current) {
             scannerRef.current.resume();
         }
+    };
+
+    // Switch camera
+    const handleSwitchCamera = async () => {
+        if (cameras.length < 2) return;
+
+        const currentIndex = cameras.findIndex(c => c.id === selectedCameraId);
+        const nextIndex = (currentIndex + 1) % cameras.length;
+        const newCameraId = cameras[nextIndex].id;
+
+        if (scannerRef.current) {
+            await scannerRef.current.stop();
+            scannerRef.current = null;
+        }
+
+        setSelectedCameraId(newCameraId);
+        setIsCameraReady(false);
+
+        // Scanner will restart via useEffect
     };
 
     // Load attendance list
@@ -300,11 +366,9 @@ export default function QRScanner({ adminOrbitId, onClose }: QRScannerProps) {
 
     // Filter attendance list
     const filteredAttendanceList = attendanceList.filter(reg => {
-        // Filter by status
         if (attendanceFilter === 'attended' && !reg.attendanceMarked) return false;
         if (attendanceFilter === 'pending' && reg.attendanceMarked) return false;
 
-        // Filter by search
         if (attendanceSearch) {
             const search = attendanceSearch.toLowerCase();
             return (
@@ -313,14 +377,13 @@ export default function QRScanner({ adminOrbitId, onClose }: QRScannerProps) {
                 reg.orbitId.toLowerCase().includes(search)
             );
         }
-
         return true;
     });
 
     // Back to event selection
-    const handleBackToEvents = () => {
+    const handleBackToEvents = async () => {
         if (scannerRef.current) {
-            scannerRef.current.clear().catch(console.error);
+            await scannerRef.current.stop().catch(() => { });
             scannerRef.current = null;
         }
         setSelectedEvent(null);
@@ -328,178 +391,174 @@ export default function QRScanner({ adminOrbitId, onClose }: QRScannerProps) {
         setViewState('select-event');
     };
 
+    // Back to dashboard
+    const handleBackToDashboard = async () => {
+        if (scannerRef.current) {
+            await scannerRef.current.stop().catch(() => { });
+            scannerRef.current = null;
+        }
+        setScanResult(null);
+        setViewState('event-dashboard');
+    };
+
     return (
         <div className="qr-scanner">
             {/* Header */}
             <div className="qr-scanner__header">
-                {viewState !== 'select-event' && (
-                    <button className="qr-scanner__back-btn" onClick={handleBackToEvents}>
-                        ← Back
-                    </button>
+                {viewState === 'event-dashboard' && (
+                    <button className="qr-scanner__back-btn" onClick={handleBackToEvents}>←</button>
+                )}
+                {(viewState === 'scanning' || viewState === 'result') && (
+                    <button className="qr-scanner__back-btn" onClick={handleBackToDashboard}>←</button>
                 )}
                 <h1 className="qr-scanner__title">
-                    {viewState === 'select-event' ? 'QR Scanner' : selectedEvent?.title}
+                    {viewState === 'select-event' ? 'Event Scanner' : selectedEvent?.title}
                 </h1>
-                {viewState !== 'select-event' && (
-                    <button className="qr-scanner__attendance-btn" onClick={handleOpenAttendanceList}>
-                        📋
-                    </button>
-                )}
-                {onClose && (
-                    <button className="qr-scanner__close-btn" onClick={onClose}>×</button>
-                )}
+                <div className="qr-scanner__header-actions">
+                    {(viewState === 'scanning' || viewState === 'result') && (
+                        <button className="qr-scanner__icon-btn" onClick={handleOpenAttendanceList}>📋</button>
+                    )}
+                    {onClose && (
+                        <button className="qr-scanner__icon-btn qr-scanner__close-btn" onClick={onClose}>×</button>
+                    )}
+                </div>
             </div>
 
-            {/* Event Selection View */}
+            {/* Event Selection */}
             {viewState === 'select-event' && (
-                <div className="qr-scanner__select-event">
-                    <h2>Select Event to Scan</h2>
+                <div className="qr-scanner__content">
+                    <h2 className="qr-scanner__section-title">Select Event</h2>
 
                     {isLoading ? (
-                        <div className="qr-scanner__loading">Loading events...</div>
+                        <div className="qr-scanner__loading">
+                            <div className="qr-scanner__spinner"></div>
+                            <p>Loading events...</p>
+                        </div>
                     ) : events.length === 0 ? (
                         <div className="qr-scanner__empty">
-                            No events with registrations found.
+                            <span className="qr-scanner__empty-icon">📅</span>
+                            <p>No events with registrations found</p>
                         </div>
                     ) : (
-                        <div className="qr-scanner__events-list">
+                        <div className="qr-scanner__events-grid">
                             {events.map(event => (
                                 <button
                                     key={event.id}
                                     className="qr-scanner__event-card"
                                     onClick={() => handleSelectEvent(event)}
-                                    disabled={isDownloading}
                                 >
-                                    <div className="qr-scanner__event-info">
-                                        <span className="qr-scanner__event-title">{event.title}</span>
-                                        <span className="qr-scanner__event-date">{event.date}</span>
-                                    </div>
-                                    <div className="qr-scanner__event-count">
-                                        {event.registrationCount} registered
-                                    </div>
+                                    <span className="qr-scanner__event-title">{event.title}</span>
+                                    <span className="qr-scanner__event-date">{event.date}</span>
+                                    <span className="qr-scanner__event-count">{event.registrationCount} registered</span>
                                 </button>
                             ))}
-                        </div>
-                    )}
-
-                    {isDownloading && (
-                        <div className="qr-scanner__downloading">
-                            <div className="qr-scanner__spinner"></div>
-                            <span>Downloading registrations...</span>
                         </div>
                     )}
                 </div>
             )}
 
-            {/* Event Dashboard View */}
+            {/* Event Dashboard */}
             {viewState === 'event-dashboard' && selectedEvent && (
-                <div className="qr-scanner__dashboard">
-                    <div className="qr-scanner__event-header">
+                <div className="qr-scanner__content">
+                    <div className="qr-scanner__event-hero">
                         <h2>{selectedEvent.title}</h2>
                         <p>{selectedEvent.date} • {selectedEvent.registrationCount} registered</p>
                     </div>
 
-                    {/* Volunteer Management Section */}
-                    <div className="qr-scanner__volunteers-section">
-                        <h3>Assign Volunteers</h3>
-                        <p className="qr-scanner__volunteers-hint">
-                            Volunteers can scan QRs from their dashboard
-                        </p>
-
-                        <div className="qr-scanner__volunteer-input-row">
+                    {/* Volunteer Section */}
+                    <div className="qr-scanner__volunteers-card">
+                        <h3>👥 Assign Volunteers</h3>
+                        <div className="qr-scanner__volunteer-form">
                             <input
                                 type="text"
-                                placeholder="Enter OrbitX ID (e.g., ORB-123-4567)"
+                                placeholder="OrbitX ID (e.g., ORB-123-4567)"
                                 value={volunteerInput}
                                 onChange={(e) => setVolunteerInput(e.target.value)}
-                                className="qr-scanner__volunteer-input"
                                 disabled={isAssigningVolunteer}
                             />
-                            <button
-                                className="qr-scanner__volunteer-add-btn"
-                                onClick={handleAssignVolunteer}
-                                disabled={isAssigningVolunteer || !volunteerInput.trim()}
-                            >
-                                {isAssigningVolunteer ? '...' : 'Assign'}
+                            <button onClick={handleAssignVolunteer} disabled={isAssigningVolunteer || !volunteerInput.trim()}>
+                                {isAssigningVolunteer ? '...' : 'Add'}
                             </button>
                         </div>
 
                         {volunteers.length > 0 && (
                             <div className="qr-scanner__volunteers-list">
-                                <h4>Active Volunteers ({volunteers.length})</h4>
-                                {volunteers.map(vol => (
-                                    <div key={vol.id} className="qr-scanner__volunteer-item">
-                                        <div className="qr-scanner__volunteer-info">
-                                            <span className="qr-scanner__volunteer-name">{vol.volunteerName}</span>
-                                            <span className="qr-scanner__volunteer-orbitid">{vol.volunteerOrbitId}</span>
-                                        </div>
-                                        <button
-                                            className="qr-scanner__volunteer-remove"
-                                            onClick={() => handleRemoveVolunteer(vol.id)}
-                                        >
-                                            ×
-                                        </button>
+                                {volunteers.map(v => (
+                                    <div key={v.id} className="qr-scanner__volunteer-chip">
+                                        <span>{v.volunteerName}</span>
+                                        <button onClick={() => handleRemoveVolunteer(v.id)}>×</button>
                                     </div>
                                 ))}
                             </div>
                         )}
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="qr-scanner__dashboard-actions">
-                        <button
-                            className="qr-scanner__start-scan-btn"
-                            onClick={handleStartScanning}
-                            disabled={isDownloading}
-                        >
-                            {isDownloading ? 'Loading...' : '📷 Start Scanning'}
-                        </button>
-                        <button
-                            className="qr-scanner__view-attendance-btn"
-                            onClick={handleOpenAttendanceList}
-                        >
-                            📋 View Attendance
-                        </button>
-                    </div>
+                    {/* Start Scanning */}
+                    <button
+                        className="qr-scanner__start-btn"
+                        onClick={handleStartScanning}
+                        disabled={isDownloading}
+                    >
+                        {isDownloading ? (
+                            <>
+                                <div className="qr-scanner__spinner qr-scanner__spinner--small"></div>
+                                Loading...
+                            </>
+                        ) : (
+                            <>📷 Start Scanning</>
+                        )}
+                    </button>
 
-                    {isDownloading && (
-                        <div className="qr-scanner__downloading">
-                            <div className="qr-scanner__spinner"></div>
-                            <span>Downloading registrations...</span>
-                        </div>
-                    )}
+                    <button className="qr-scanner__secondary-btn" onClick={handleOpenAttendanceList}>
+                        📋 View Attendance List
+                    </button>
                 </div>
             )}
 
             {/* Scanning View */}
             {viewState === 'scanning' && (
-                <div className="qr-scanner__scanning">
-                    <div
-                        id="qr-reader"
-                        ref={scannerContainerRef}
-                        className="qr-scanner__reader"
-                    ></div>
+                <div className="qr-scanner__scanning-view">
+                    {/* Camera viewport */}
+                    <div className="qr-scanner__camera-container">
+                        <div id="qr-reader" className="qr-scanner__camera"></div>
 
-                    <div className="qr-scanner__stats-bar">
-                        <div className="qr-scanner__stat">
-                            <span className="qr-scanner__stat-label">Scanned:</span>
-                            <span className="qr-scanner__stat-value">{stats.attended}/{stats.total}</span>
+                        {!isCameraReady && (
+                            <div className="qr-scanner__camera-loading">
+                                <div className="qr-scanner__spinner"></div>
+                                <p>Starting camera...</p>
+                            </div>
+                        )}
+
+                        {/* Camera switch button */}
+                        {cameras.length > 1 && (
+                            <button className="qr-scanner__camera-switch" onClick={handleSwitchCamera}>
+                                🔄
+                            </button>
+                        )}
+
+                        {/* Scan frame overlay */}
+                        <div className="qr-scanner__scan-frame"></div>
+                    </div>
+
+                    {/* Stats bar */}
+                    <div className="qr-scanner__scan-stats">
+                        <div className="qr-scanner__stat-item">
+                            <span className="qr-scanner__stat-value">{stats.attended}</span>
+                            <span className="qr-scanner__stat-label">/ {stats.total} Scanned</span>
                         </div>
-                        <div className="qr-scanner__stat">
-                            <span className={`qr-scanner__sync-indicator ${isOnline ? 'online' : 'offline'}`}>
-                                {isOnline ? '🟢' : '🔴'}
-                            </span>
+                        <div className="qr-scanner__stat-item">
+                            <span className={`qr-scanner__status-dot ${isOnline ? 'online' : 'offline'}`}></span>
+                            <span>{isOnline ? 'Online' : 'Offline'}</span>
                             {pendingSyncCount > 0 && (
-                                <span className="qr-scanner__pending-badge">
-                                    {pendingSyncCount} pending
-                                </span>
+                                <span className="qr-scanner__pending-badge">{pendingSyncCount}</span>
                             )}
                         </div>
                     </div>
 
-                    {lastScannedReg && (
+                    {/* Last scanned */}
+                    {lastScannedName && (
                         <div className="qr-scanner__last-scan">
-                            Last: {lastScannedReg.firstName} {lastScannedReg.lastName} - {lastScannedReg.orbitId} ✓
+                            ✓ Last: {lastScannedName}
                         </div>
                     )}
                 </div>
@@ -507,45 +566,34 @@ export default function QRScanner({ adminOrbitId, onClose }: QRScannerProps) {
 
             {/* Result View */}
             {viewState === 'result' && scanResult && (
-                <div className={`qr-scanner__result qr-scanner__result--${scanResult.status}`}>
-                    <div className="qr-scanner__result-icon">
-                        {scanResult.status === 'valid' && '✓'}
-                        {scanResult.status === 'already-scanned' && '⚠️'}
-                        {scanResult.status === 'invalid' && '✗'}
-                        {scanResult.status === 'error' && '!'}
-                    </div>
-
-                    {scanResult.registration ? (
-                        <div className="qr-scanner__result-info">
-                            <h2 className="qr-scanner__result-name">
-                                {scanResult.registration.firstName} {scanResult.registration.lastName}
-                            </h2>
-                            <p className="qr-scanner__result-orbitid">{scanResult.registration.orbitId}</p>
-                            <p className="qr-scanner__result-college">{scanResult.registration.collegeName}</p>
+                <div className={`qr-scanner__result-view qr-scanner__result--${scanResult.status}`}>
+                    <div className="qr-scanner__result-card">
+                        <div className="qr-scanner__result-icon">
+                            {scanResult.status === 'valid' && '✓'}
+                            {scanResult.status === 'already-scanned' && '⚠'}
+                            {scanResult.status === 'invalid' && '✗'}
+                            {scanResult.status === 'error' && '!'}
                         </div>
-                    ) : (
-                        <div className="qr-scanner__result-info">
-                            <h2 className="qr-scanner__result-status">
-                                {scanResult.status === 'invalid' ? 'Invalid QR' : 'Error'}
-                            </h2>
-                        </div>
-                    )}
 
-                    <p className="qr-scanner__result-message">{scanResult.message}</p>
-
-                    <div className="qr-scanner__result-actions">
-                        {scanResult.status === 'valid' && (
-                            <button
-                                className="qr-scanner__mark-btn"
-                                onClick={handleMarkAttendance}
-                                disabled={isMarkingAttendance}
-                            >
-                                {isMarkingAttendance ? 'Marking...' : 'Mark Attendance'}
-                            </button>
+                        {scanResult.registration ? (
+                            <div className="qr-scanner__result-info">
+                                <h2>{scanResult.registration.firstName} {scanResult.registration.lastName}</h2>
+                                <p className="qr-scanner__result-orbitid">{scanResult.registration.orbitId}</p>
+                                <p className="qr-scanner__result-college">{scanResult.registration.collegeName}</p>
+                            </div>
+                        ) : (
+                            <div className="qr-scanner__result-info">
+                                <h2>{scanResult.status === 'invalid' ? 'Invalid QR Code' : 'Error'}</h2>
+                            </div>
                         )}
-                        <button className="qr-scanner__next-btn" onClick={handleScanNext}>
-                            Scan Next
+
+                        <p className="qr-scanner__result-message">{scanResult.message}</p>
+
+                        <button className="qr-scanner__scan-next-btn" onClick={handleScanNext}>
+                            📷 Scan Next
                         </button>
+
+                        <p className="qr-scanner__auto-continue">Auto-continuing in 2s...</p>
                     </div>
                 </div>
             )}
@@ -554,73 +602,57 @@ export default function QRScanner({ adminOrbitId, onClose }: QRScannerProps) {
             {showAttendanceList && (
                 <div className="qr-scanner__overlay" onClick={() => setShowAttendanceList(false)}>
                     <div className="qr-scanner__attendance-panel" onClick={e => e.stopPropagation()}>
-                        <div className="qr-scanner__attendance-header">
-                            <h2>Attendance - {selectedEvent?.title}</h2>
+                        <div className="qr-scanner__panel-header">
+                            <h2>Attendance</h2>
                             <button onClick={() => setShowAttendanceList(false)}>×</button>
                         </div>
 
-                        <div className="qr-scanner__attendance-filters">
+                        <div className="qr-scanner__panel-filters">
                             <input
                                 type="text"
-                                placeholder="Search by name or Orbit ID..."
+                                placeholder="Search..."
                                 value={attendanceSearch}
                                 onChange={(e) => setAttendanceSearch(e.target.value)}
-                                className="qr-scanner__search-input"
                             />
-                            <div className="qr-scanner__filter-btns">
-                                <button
-                                    className={attendanceFilter === 'all' ? 'active' : ''}
-                                    onClick={() => setAttendanceFilter('all')}
-                                >
-                                    All
-                                </button>
-                                <button
-                                    className={attendanceFilter === 'attended' ? 'active' : ''}
-                                    onClick={() => setAttendanceFilter('attended')}
-                                >
-                                    Checked In
-                                </button>
-                                <button
-                                    className={attendanceFilter === 'pending' ? 'active' : ''}
-                                    onClick={() => setAttendanceFilter('pending')}
-                                >
-                                    Not Yet
-                                </button>
+                            <div className="qr-scanner__filter-tabs">
+                                {(['all', 'attended', 'pending'] as const).map(filter => (
+                                    <button
+                                        key={filter}
+                                        className={attendanceFilter === filter ? 'active' : ''}
+                                        onClick={() => setAttendanceFilter(filter)}
+                                    >
+                                        {filter === 'all' ? 'All' : filter === 'attended' ? '✓' : '○'}
+                                    </button>
+                                ))}
                             </div>
                         </div>
 
-                        <div className="qr-scanner__attendance-list">
+                        <div className="qr-scanner__panel-list">
                             {filteredAttendanceList.map(reg => (
                                 <div
                                     key={reg.qrSignature}
-                                    className={`qr-scanner__attendance-item ${reg.attendanceMarked ? 'checked-in' : ''}`}
+                                    className={`qr-scanner__list-item ${reg.attendanceMarked ? 'checked' : ''}`}
                                 >
-                                    <span className="qr-scanner__attendance-status">
+                                    <span className="qr-scanner__list-status">
                                         {reg.attendanceMarked ? '✓' : '○'}
                                     </span>
-                                    <span className="qr-scanner__attendance-name">
-                                        {reg.firstName} {reg.lastName}
-                                    </span>
-                                    <span className="qr-scanner__attendance-orbitid">
-                                        {reg.orbitId}
-                                    </span>
-                                    <span className="qr-scanner__attendance-time">
+                                    <div className="qr-scanner__list-info">
+                                        <span className="qr-scanner__list-name">
+                                            {reg.firstName} {reg.lastName}
+                                        </span>
+                                        <span className="qr-scanner__list-id">{reg.orbitId}</span>
+                                    </div>
+                                    <span className="qr-scanner__list-time">
                                         {reg.attendanceMarked && reg.markedAt
-                                            ? new Date(reg.markedAt).toLocaleTimeString('en-IN', {
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                hour12: true,
-                                            })
-                                            : 'Not checked in'}
+                                            ? new Date(reg.markedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+                                            : '—'}
                                     </span>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="qr-scanner__attendance-summary">
-                            <span>Total: {attendanceList.length}</span>
-                            <span>Checked In: {attendanceList.filter(r => r.attendanceMarked).length}</span>
-                            <span>Remaining: {attendanceList.filter(r => !r.attendanceMarked).length}</span>
+                        <div className="qr-scanner__panel-footer">
+                            <span>{attendanceList.filter(r => r.attendanceMarked).length} / {attendanceList.length} checked in</span>
                         </div>
                     </div>
                 </div>
