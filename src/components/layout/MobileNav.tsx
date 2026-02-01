@@ -112,7 +112,7 @@ const SCROLL_THRESHOLD = 10;
 
 export default function MobileNav() {
     const location = useLocation();
-    const { user } = useAuth();
+    const { user, profile } = useAuth();
     const { isRecruitmentOpen } = useRecruitment();
     const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
     const [isMobile, setIsMobile] = useState(false);
@@ -298,18 +298,31 @@ export default function MobileNav() {
                     const isActive = location.pathname === path ||
                         (path === '/' && location.pathname === '/');
 
+                    // Check if this is the dashboard item and user has an avatar
+                    const isDashboardWithAvatar = item.id === 'dashboard' && profile?.avatar;
+
                     return (
                         <Link
                             key={item.id}
                             to={path}
-                            className={`mobile-nav__item ${isActive ? 'mobile-nav__item--active' : ''}`}
+                            className={`mobile-nav__item ${isActive ? 'mobile-nav__item--active' : ''} ${isDashboardWithAvatar ? 'mobile-nav__item--avatar' : ''}`}
                             onTouchStart={() => handleTouchStart(item.id)}
                             onTouchEnd={handleTouchEnd}
                             onTouchCancel={handleTouchEnd}
                         >
-                            <span className="mobile-nav__icon">
-                                {icon}
-                            </span>
+                            {isDashboardWithAvatar ? (
+                                <span className="mobile-nav__avatar">
+                                    <img
+                                        src={profile.avatar}
+                                        alt="Profile"
+                                        className="mobile-nav__avatar-img"
+                                    />
+                                </span>
+                            ) : (
+                                <span className="mobile-nav__icon">
+                                    {icon}
+                                </span>
+                            )}
                             {activeTooltip === item.id && (
                                 <span className="mobile-nav__tooltip">
                                     {label}
