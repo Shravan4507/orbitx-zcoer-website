@@ -69,7 +69,7 @@ export default function Footer() {
             </div>
 
             <div className="footer-bottom">
-                <p>© 2025 OrbitX. All rights reserved.</p>
+                <p>© 2026 OrbitX. All rights reserved.</p>
                 <p className="footer-tagline"><a href="https://www.instagram.com/shravan45x/" target="_blank" rel="noopener noreferrer" className="creator-link">Creator - </a><span className="tooltip-wrapper" data-tooltip="@shravan45x"><a href="https://www.instagram.com/shravan45x/" target="_blank" rel="noopener noreferrer" className="spinning-dollar">$</a></span></p>
             </div>
         </footer>

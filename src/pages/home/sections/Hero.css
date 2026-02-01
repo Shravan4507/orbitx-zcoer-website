@@ -117,12 +117,16 @@
         border-radius: 1.5rem;
     }
 
+    .hero__logo-wrapper {
+        margin-bottom: 0.5rem;
+    }
+
     .hero__logo {
-        height: 90px;
+        height: 240px;
     }
 
     .hero__headline {
-        font-size: 2rem;
+        font-size: 2.6rem;
     }
 
     .hero__subheading {
@@ -136,12 +140,16 @@
         border-radius: 1rem;
     }
 
+    .hero__logo-wrapper {
+        margin-bottom: 0.25rem;
+    }
+
     .hero__logo {
-        height: 70px;
+        height: 200px;
     }
 
     .hero__headline {
-        font-size: 1.5rem;
+        font-size: 2.2rem;
     }
 
     .hero__subheading {
