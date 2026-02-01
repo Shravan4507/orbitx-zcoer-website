@@ -114,7 +114,7 @@ export default function AdminSetup() {
             newErrors.mobile = 'Enter a valid 10-digit mobile number';
         }
         if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
-        if (!formData.gender) newErrors.gender = 'Gender is required';
+        if (!formData.gender) newErrors.gender = 'Sex is required';
         if (!formData.team) newErrors.team = 'Team is required';
         if (!formData.position) newErrors.position = 'Position is required';
 
@@ -272,12 +272,12 @@ export default function AdminSetup() {
                                 </div>
 
                                 <div className="admin-setup__form-group">
-                                    <label className="admin-setup__label">Gender *</label>
+                                    <label className="admin-setup__label">Sex *</label>
                                     <CustomSelect
                                         options={GENDER_OPTIONS}
                                         value={formData.gender}
                                         onChange={(value) => updateField('gender', value)}
-                                        placeholder="Select gender"
+                                        placeholder="Select sex"
                                     />
                                     {errors.gender && <span className="admin-setup__error">{errors.gender}</span>}
                                 </div>
