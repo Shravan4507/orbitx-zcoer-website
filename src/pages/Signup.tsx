@@ -3,13 +3,15 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useToast } from '../components/toast/Toast';
 import CustomSelect from '../components/ui/CustomSelect';
 import CustomDatePicker from '../components/ui/CustomDatePicker';
+import Autocomplete from '../components/ui/Autocomplete';
 import { completeGoogleSignup } from '../services/firebase/auth';
 import { auth } from '../services/firebase/config';
+import collegesData from '../data/colleges.json';
+import { majors } from '../data/majors';
 import {
     GENDER_OPTIONS,
     QUALIFICATION_LEVELS,
     STREAM_OPTIONS,
-    COURSE_OPTIONS,
     YEAR_OF_STUDY_OPTIONS,
     generateGraduationYears,
 } from '../types/user';
@@ -114,7 +116,7 @@ export default function Signup() {
         }
 
         if (!formData.gender) {
-            newErrors.gender = 'Please select your gender';
+            newErrors.gender = 'Please select your sex';
         }
 
         setErrors(newErrors);
@@ -133,11 +135,11 @@ export default function Signup() {
         }
 
         if (!formData.collegeName.trim()) {
-            newErrors.collegeName = 'College name is required';
+            newErrors.collegeName = 'Please select your college from the list';
         }
 
         if (!formData.courseName) {
-            newErrors.courseName = 'Please select your course';
+            newErrors.courseName = 'Please select your major';
         }
 
         if (!formData.yearOfStudy) {
@@ -300,12 +302,12 @@ export default function Signup() {
                     {errors.dateOfBirth && <span className="signup-form__error">{errors.dateOfBirth}</span>}
                 </div>
                 <div className="signup-form__group">
-                    <label className="signup-form__label">Gender *</label>
+                    <label className="signup-form__label">Sex *</label>
                     <CustomSelect
                         options={GENDER_OPTIONS}
                         value={formData.gender}
                         onChange={(value) => handleCustomChange('gender', value)}
-                        placeholder="Select Gender"
+                        placeholder="Select Sex"
                         error={!!errors.gender}
                     />
                     {errors.gender && <span className="signup-form__error">{errors.gender}</span>}
@@ -345,24 +347,23 @@ export default function Signup() {
 
             <div className="signup-form__group">
                 <label className="signup-form__label">College/University Name *</label>
-                <input
-                    type="text"
-                    name="collegeName"
-                    className={`signup-form__input ${errors.collegeName ? 'signup-form__input--error' : ''}`}
-                    placeholder="Enter your college name"
+                <Autocomplete
+                    options={collegesData as string[]}
                     value={formData.collegeName}
-                    onChange={handleChange}
+                    onChange={(value) => handleCustomChange('collegeName', value)}
+                    placeholder="Start typing your college name..."
+                    error={!!errors.collegeName}
                 />
                 {errors.collegeName && <span className="signup-form__error">{errors.collegeName}</span>}
             </div>
 
             <div className="signup-form__group">
-                <label className="signup-form__label">Course *</label>
+                <label className="signup-form__label">Major *</label>
                 <CustomSelect
-                    options={COURSE_OPTIONS}
+                    options={majors.map(m => ({ value: m, label: m }))}
                     value={formData.courseName}
                     onChange={(value) => handleCustomChange('courseName', value)}
-                    placeholder="Select Course"
+                    placeholder="Select Major"
                     error={!!errors.courseName}
                 />
                 {errors.courseName && <span className="signup-form__error">{errors.courseName}</span>}
