@@ -236,7 +236,7 @@ export const completeGoogleSignup = async (
     // Generate Orbit ID
     const orbitId = await generateOrbitId(profileData.firstName);
 
-    // Create user profile
+    // Create user profile with Google photo as avatar
     const userProfile: UserProfile = {
         uid: user.uid,
         orbitId,
@@ -252,6 +252,7 @@ export const completeGoogleSignup = async (
         courseName: profileData.courseName,
         yearOfStudy: profileData.yearOfStudy,
         yearOfGraduation: profileData.yearOfGraduation,
+        avatar: user.photoURL || undefined, // Use Google profile photo
         role: 'user',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -309,6 +310,44 @@ export const checkUserExistsByEmail = async (email: string): Promise<boolean> =>
     const snapshot = await getDocs(usersQuery);
 
     return snapshot.docs.some(doc => doc.data().email === email);
+};
+
+/**
+ * Syncs the Google profile photo to the user's avatar
+ * Call this when a Google user logs in to update their profile photo
+ */
+export const syncGooglePhoto = async (): Promise<string | null> => {
+    const user = auth.currentUser;
+    if (!user || !user.photoURL) return null;
+
+    // Check if user exists in users collection
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (userDoc.exists()) {
+        const currentData = userDoc.data();
+        // Only update if avatar is different or not set
+        if (currentData.avatar !== user.photoURL) {
+            await updateDoc(doc(db, 'users', user.uid), {
+                avatar: user.photoURL,
+                updatedAt: new Date().toISOString()
+            });
+        }
+        return user.photoURL;
+    }
+
+    // Check if user is admin
+    const adminDoc = await getDoc(doc(db, 'admins', user.uid));
+    if (adminDoc.exists()) {
+        const currentData = adminDoc.data();
+        if (currentData.avatar !== user.photoURL) {
+            await updateDoc(doc(db, 'admins', user.uid), {
+                avatar: user.photoURL,
+                updatedAt: new Date().toISOString()
+            });
+        }
+        return user.photoURL;
+    }
+
+    return null;
 };
 
 // ==================== ADMIN SIGNUP ====================

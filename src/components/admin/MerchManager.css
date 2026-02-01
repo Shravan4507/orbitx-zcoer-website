@@ -390,6 +390,16 @@
     resize: vertical;
 }
 
+
+.merch-manager__label-hint {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.3);
+    margin-left: 0.5rem;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
 .merch-manager__size-grid {
     display: flex;
     gap: 0.75rem;

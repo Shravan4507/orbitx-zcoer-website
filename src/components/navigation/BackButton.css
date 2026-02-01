@@ -10,7 +10,6 @@
     border-radius: 50%;
     color: rgba(255, 255, 255, 0.8);
     cursor: pointer;
-    transition: all 0.3s ease;
     position: fixed;
     top: 2rem;
     left: 2rem;
@@ -19,29 +18,19 @@
     pointer-events: all;
 }
 
-.global-back-button:hover:not(:disabled) {
-    transform: translateX(-2px);
-}
-
 .global-back-button:active:not(:disabled) {
-    transform: translateX(-4px) scale(0.98);
+    transform: scale(0.98);
 }
 
 .global-back-button svg {
     width: 18px;
     height: 18px;
-    transition: transform 0.2s ease;
-}
-
-.global-back-button:hover:not(:disabled) svg {
-    transform: translateX(-2px);
 }
 
 /* Hidden state when no history */
 .global-back-button--hidden {
     opacity: 0;
     pointer-events: none;
-    transform: translateX(-10px);
 }
 
 .global-back-button:disabled {

@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { User as FirebaseUser } from 'firebase/auth';
-import { onAuthChange, getCurrentUserProfile, logoutUser } from '@/services/firebase/auth';
+import { onAuthChange, getCurrentUserProfile, logoutUser, syncGooglePhoto } from '@/services/firebase/auth';
 import type { UserProfile, AdminProfile, AdminPermission } from '@/types/user';
 
 interface AuthContextType {
@@ -33,7 +33,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
             if (firebaseUser) {
                 try {
+                    // Sync Google photo if user has one (runs in background)
+                    if (firebaseUser.photoURL) {
+                        syncGooglePhoto().catch(console.error);
+                    }
+
                     const userProfile = await getCurrentUserProfile();
+
+                    // If user has Google photo but profile doesn't have avatar, add it
+                    if (userProfile && firebaseUser.photoURL && !userProfile.avatar) {
+                        userProfile.avatar = firebaseUser.photoURL;
+                    }
+
                     setProfile(userProfile);
                 } catch (error) {
                     console.error('Error fetching user profile:', error);

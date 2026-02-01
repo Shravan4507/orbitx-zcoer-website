@@ -1,3 +1,4 @@
+/* Login Button (for non-authenticated users) */
 .login-button {
     position: fixed;
     top: 25px;
@@ -13,18 +14,164 @@
     border-radius: 9999px;
     cursor: pointer;
     z-index: 1001;
-    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.login-button:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .login-button:active {
     transform: scale(0.98);
 }
 
-.login-button--loading {
-    opacity: 0.5;
-    cursor: default;
+/* Avatar Wrapper */
+.login-avatar-wrap {
+    position: fixed;
+    top: 20px;
+    right: 25px;
+    z-index: 1001;
 }
 
+/* Avatar Button (for authenticated users) */
+.login-avatar {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: linear-gradient(135deg, #6366f1 0%, #a94eff 100%);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-avatar:active {
+    transform: scale(0.98);
+}
+
+.login-avatar__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.login-avatar__initials {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.5px;
+}
+
+/* Backdrop for closing dropdown */
+.login-avatar-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+}
+
+/* Dropdown Menu - EXACT copy of user-dropdown-menu */
+.login-avatar-dropdown {
+    position: absolute;
+    top: calc(100% + 0.75rem);
+    right: 0;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 120px;
+    z-index: 1002;
+    animation: slideInFromTop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-origin: top right;
+}
+
+.login-avatar-dropdown.closing {
+    animation: slideOutToTop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInFromTop {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes slideOutToTop {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+}
+
+.login-avatar-dropdown button {
+    background: transparent;
+    border: none;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    color: rgb(255, 255, 255);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+}
+
+.login-avatar-dropdown button:active {
+    transform: scale(0.98);
+}
+
+/* Loading State */
+.login-avatar--loading {
+    position: fixed;
+    top: 20px;
+    right: 25px;
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #6366f1 0%, #a94eff 100%);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    cursor: default;
+    opacity: 0.7;
+}
+
+.login-avatar__spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: login-spin 0.7s linear infinite;
+}
+
+@keyframes login-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
 @media (max-width: 700px) {
     .login-button {
         top: 10px;
@@ -32,11 +179,35 @@
         padding: 0.5rem 1rem;
         font-size: 0.8rem;
     }
+
+    .login-avatar-wrap {
+        top: 12px;
+        right: 12px;
+    }
+
+    .login-avatar {
+        width: 38px;
+        height: 38px;
+    }
+
+    .login-avatar__initials {
+        font-size: 0.8rem;
+    }
+
+    .login-avatar--loading {
+        top: 12px;
+        right: 12px;
+        width: 38px;
+        height: 38px;
+    }
 }
 
 /* Hide on mobile - bottom nav handles navigation */
 @media (max-width: 768px) {
-    .login-button {
+
+    .login-button,
+    .login-avatar-wrap,
+    .login-avatar--loading {
         display: none;
     }
 }

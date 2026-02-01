@@ -18,7 +18,6 @@ import { useRecruitment } from '../contexts/RecruitmentContext';
 import { ADMIN_PERMISSIONS } from '../types/user';
 import type { Promotion } from '../types/user';
 import { getUserRegistrations, generatePassPdfForRegistration, downloadPass, type RegistrationRecord } from '../services/firebase/eventPass';
-import { hasVolunteerAccess } from '../services/scanner/volunteerService';
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -72,10 +71,6 @@ export default function Dashboard() {
     const canManageQueries = isAdmin && hasPermission(ADMIN_PERMISSIONS.MANAGE_QUERIES);
     const canManageMerchOrders = isAdmin && hasPermission(ADMIN_PERMISSIONS.MANAGE_MERCH_ORDERS);
     const canManageMerch = isAdmin && hasPermission(ADMIN_PERMISSIONS.MANAGE_MERCH);
-    const canScanQr = isAdmin && hasPermission(ADMIN_PERMISSIONS.SCAN_QR);
-
-    // Volunteer scanner access (non-admin users who are assigned as volunteers)
-    const [isVolunteer, setIsVolunteer] = useState(false);
 
     // Recruitment context
     const { isRecruitmentOpen, toggleRecruitment } = useRecruitment();
@@ -99,17 +94,6 @@ export default function Dashboard() {
             return () => clearTimeout(timer);
         }
     }, [showManageDropdown]);
-
-    // Check if user has volunteer access (for non-admins who are assigned as event volunteers)
-    useEffect(() => {
-        const checkVolunteerAccess = async () => {
-            if (profile?.orbitId && !canScanQr) {
-                const hasAccess = await hasVolunteerAccess(profile.orbitId);
-                setIsVolunteer(hasAccess);
-            }
-        };
-        checkVolunteerAccess();
-    }, [profile?.orbitId, canScanQr]);
 
     // Promotions from Firestore
     const [promos, setPromos] = useState<Promotion[]>([]);
@@ -460,16 +444,6 @@ export default function Dashboard() {
                                     </button>
                                 ))}
 
-                                {/* Volunteer Scan QRs Button */}
-                                {isVolunteer && !canScanQr && (
-                                    <button
-                                        className="sidebar-action-btn sidebar-action-btn--volunteer"
-                                        onClick={() => navigate('/scan-qrs')}
-                                    >
-                                        📷 Scan QRs
-                                    </button>
-                                )}
-
                                 {
                                     /* Admin Manage Dropdown */
                                     (canManagePromos || canManageEvents || canManageJoin || canManageApplications || canManageQueries || canManageMerchOrders || canManageMerch) && (
@@ -618,23 +592,6 @@ export default function Dashboard() {
                                                                 <line x1="7" y1="7" x2="7.01" y2="7"></line>
                                                             </svg>
                                                             <span>Manage Merch</span>
-                                                        </button>
-                                                    )}
-                                                    {canScanQr && (
-                                                        <button
-                                                            className="manage-dropdown__item"
-                                                            onClick={() => {
-                                                                setShowManageDropdown(false);
-                                                                navigate('/event-scanner');
-                                                            }}
-                                                        >
-                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                <rect x="3" y="3" width="7" height="7"></rect>
-                                                                <rect x="14" y="3" width="7" height="7"></rect>
-                                                                <rect x="3" y="14" width="7" height="7"></rect>
-                                                                <rect x="14" y="14" width="7" height="7"></rect>
-                                                            </svg>
-                                                            <span>Event Scanner</span>
                                                         </button>
                                                     )}
                                                 </div>

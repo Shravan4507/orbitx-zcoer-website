@@ -487,6 +487,8 @@ export default function MerchManager() {
                                         </label>
                                     </div>
 
+
+
                                     <div className="merch-manager__form-group--full">
                                         <label className="merch-manager__label">Product Images *</label>
                                         <div

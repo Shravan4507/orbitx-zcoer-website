@@ -202,6 +202,7 @@ export default function ProfileOverlay({ isOpen, onClose }: ProfileOverlayProps)
                                 src={profile.avatar}
                                 alt={profile.firstName}
                                 className="profile-overlay__avatar"
+                                referrerPolicy="no-referrer"
                             />
                         ) : (
                             <div className="profile-overlay__avatar profile-overlay__avatar--initials">
