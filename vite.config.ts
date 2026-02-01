@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon/favicon.png', 'favicon/apple-touch-icon.png'],
+      includeAssets: ['favicon/favicon.png', 'AppImages/ios/180.png'],
       manifest: {
         name: 'OrbitX - Space & Astronomy Club',
         short_name: 'OrbitX',
@@ -23,28 +23,33 @@ export default defineConfig({
         categories: ['education', 'science', 'lifestyle'],
         icons: [
           {
-            src: 'favicon/pwa-192x192.png',
+            src: 'AppImages/android/android-launchericon-192-192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: 'favicon/pwa-512x512.png',
+            src: 'AppImages/android/android-launchericon-512-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: 'favicon/pwa-maskable-192x192.png',
+            src: 'AppImages/android/android-launchericon-192-192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'maskable'
           },
           {
-            src: 'favicon/pwa-maskable-512x512.png',
+            src: 'AppImages/android/android-launchericon-512-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
+          },
+          {
+            src: 'AppImages/ios/180.png',
+            sizes: '180x180',
+            type: 'image/png'
           }
         ],
         screenshots: [
