@@ -310,7 +310,9 @@ main.sphere-main {
     display: grid;
     grid-template-columns: 30% 70%;
     gap: 0;
-    background: rgba(15, 15, 20, 0.98);
+    background: rgba(0, 0, 0, 0.98);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: inherit;
     overflow: hidden;
     will-change: transform, opacity;
@@ -335,14 +337,30 @@ main.sphere-main {
 .enlarge__expanded-left {
     display: flex;
     flex-direction: column;
-    background: rgba(255, 255, 255, 0.02);
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.98);
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
 }
 
 .enlarge__expanded-img {
     width: 100%;
     height: 70%;
     object-fit: cover;
+    position: relative;
+}
+
+/* Gradient overlay at bottom of image */
+.enlarge__expanded-left::before {
+    content: '';
+    position: absolute;
+    bottom: 30%;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.98));
+    pointer-events: none;
+    z-index: 1;
 }
 
 .enlarge__expanded-info {
@@ -353,6 +371,19 @@ main.sphere-main {
     justify-content: center;
     padding: 1rem;
     text-align: center;
+    position: relative;
+}
+
+/* Gradient overlay at top of info */
+.enlarge__expanded-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.98), transparent);
+    pointer-events: none;
 }
 
 .enlarge__expanded-name {
@@ -580,6 +611,30 @@ main.sphere-main {
 /* X (formerly Twitter) - Pure black */
 .enlarge__social-link--x:hover {
     background: #000;
+    color: #fff;
+}
+
+/* Facebook - Official blue */
+.enlarge__social-link--facebook:hover {
+    background: #1877F2;
+    color: #fff;
+}
+
+/* Snapchat - Yellow with dark icon */
+.enlarge__social-link--snapchat:hover {
+    background: #FFFC00;
+    color: #000;
+}
+
+/* WhatsApp - Official green */
+.enlarge__social-link--whatsapp:hover {
+    background: #25D366;
+    color: #fff;
+}
+
+/* Contact/Phone - Emerald green */
+.enlarge__social-link--phone:hover {
+    background: #10B981;
     color: #fff;
 }
 

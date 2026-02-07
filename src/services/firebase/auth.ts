@@ -6,7 +6,7 @@ import {
     deleteUser
 } from 'firebase/auth';
 import type { User as FirebaseUser } from 'firebase/auth';
-import { doc, setDoc, getDoc, collection, query, getDocs, updateDoc, arrayUnion, arrayRemove, deleteDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, collection, query, getDocs, updateDoc, arrayUnion, arrayRemove, deleteDoc, deleteField } from 'firebase/firestore';
 import { auth, db, googleProvider } from './config';
 import type { UserProfile } from '@/types/user';
 
@@ -114,7 +114,7 @@ export const releaseOrbitId = async (orbitId: string): Promise<void> => {
 
 /**
  * Deletes a user account completely
- * 1. Deletes Firestore user document
+ * 1. Deletes Firestore user/admin document
  * 2. Releases the Orbit ID for reuse
  * 3. Deletes the Firebase Auth user
  */
@@ -126,21 +126,38 @@ export const deleteUserAccount = async (): Promise<void> => {
     }
 
     try {
-        // Get user profile to retrieve Orbit ID
+        let orbitId: string | null = null;
+
+        // Check if user exists in 'users' collection
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
 
         if (userDoc.exists()) {
             const userData = userDoc.data();
-            const orbitId = userData.orbitId;
+            orbitId = userData.orbitId;
 
             // Delete the Firestore user document
             await deleteDoc(userDocRef);
+        }
 
-            // Release the Orbit ID so it can be reused
-            if (orbitId) {
-                await releaseOrbitId(orbitId);
+        // Also check if user exists in 'admins' collection
+        const adminDocRef = doc(db, 'admins', user.uid);
+        const adminDoc = await getDoc(adminDocRef);
+
+        if (adminDoc.exists()) {
+            const adminData = adminDoc.data();
+            // If we didn't get orbitId from users, get it from admins
+            if (!orbitId) {
+                orbitId = adminData.orbitId;
             }
+
+            // Delete the Firestore admin document
+            await deleteDoc(adminDocRef);
+        }
+
+        // Release the Orbit ID so it can be reused
+        if (orbitId) {
+            await releaseOrbitId(orbitId);
         }
 
         // Delete the Firebase Auth user
@@ -595,5 +612,199 @@ export const checkAdminExistsByEmail = async (email: string): Promise<boolean> =
     const adminsQuery = query(collection(db, 'admins'));
     const snapshot = await getDocs(adminsQuery);
     return snapshot.docs.some(doc => doc.data().email === email);
+};
+
+/**
+ * Update admin's public profile for member card display
+ * Sets status to 'pending' for approval by admin with MANAGE_MEMBERS permission
+ */
+export const updateAdminPublicProfile = async (uid: string, publicProfile: {
+    displayImage?: string;
+    academicYear?: string;
+    major?: string;
+    division?: string;
+    graduationYear?: string;
+    socialLinks?: {
+        instagram?: string;
+        facebook?: string;
+        snapchat?: string;
+        linkedin?: string;
+        github?: string;
+        twitter?: string;
+        whatsapp?: string;
+        contactNumber?: string;
+    };
+    isProfilePublic?: boolean;
+}): Promise<void> => {
+    const adminRef = doc(db, 'admins', uid);
+    const adminDoc = await getDoc(adminRef);
+
+    if (!adminDoc.exists()) {
+        throw new Error('Admin profile not found');
+    }
+
+    // Always set to pending when profile is updated
+    const updatedProfile = {
+        ...publicProfile,
+        approvalStatus: 'pending',
+        submittedAt: new Date().toISOString(),
+        // Clear previous review data
+        reviewedBy: null,
+        reviewedAt: null,
+        rejectionReason: null
+    };
+
+    await setDoc(adminRef, {
+        ...adminDoc.data(),
+        publicProfile: updatedProfile,
+        updatedAt: new Date().toISOString()
+    }, { merge: true });
+};
+
+/**
+ * Fetch all public admin profiles for members gallery
+ * Only returns APPROVED profiles with isProfilePublic === true
+ */
+export const getPublicAdminProfiles = async () => {
+    const adminsQuery = query(collection(db, 'admins'));
+    const snapshot = await getDocs(adminsQuery);
+
+    return snapshot.docs
+        .map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                uid: data.uid,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                dateOfBirth: data.dateOfBirth,
+                team: data.team,
+                position: data.position,
+                publicProfile: data.publicProfile || {}
+            };
+        })
+        .filter(admin =>
+            // Only include if profile is APPROVED, public, and has at least a name
+            admin.publicProfile?.approvalStatus === 'approved' &&
+            admin.publicProfile?.isProfilePublic !== false &&
+            admin.firstName &&
+            admin.firstName.trim() !== ''
+        );
+};
+
+/**
+ * Fetch all admin profiles pending approval
+ * For admins with MANAGE_MEMBERS permission
+ */
+export const getPendingAdminProfiles = async () => {
+    const adminsQuery = query(collection(db, 'admins'));
+    const snapshot = await getDocs(adminsQuery);
+
+    return snapshot.docs
+        .map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                uid: data.uid,
+                orbitId: data.orbitId,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                dateOfBirth: data.dateOfBirth,
+                team: data.team,
+                position: data.position,
+                publicProfile: data.publicProfile || {}
+            };
+        })
+        .filter(admin =>
+            // Only include if profile has pending status
+            admin.publicProfile?.approvalStatus === 'pending' &&
+            admin.firstName &&
+            admin.firstName.trim() !== ''
+        );
+};
+
+/**
+ * Approve admin profile for members gallery
+ */
+export const approveAdminProfile = async (uid: string, reviewerOrbitId: string): Promise<void> => {
+    const adminRef = doc(db, 'admins', uid);
+    const adminDoc = await getDoc(adminRef);
+
+    if (!adminDoc.exists()) {
+        throw new Error('Admin profile not found');
+    }
+
+    const currentData = adminDoc.data();
+    const updatedProfile = {
+        ...currentData.publicProfile,
+        approvalStatus: 'approved',
+        reviewedBy: reviewerOrbitId,
+        reviewedAt: new Date().toISOString(),
+        rejectionReason: null
+    };
+
+    await setDoc(adminRef, {
+        ...currentData,
+        publicProfile: updatedProfile,
+        updatedAt: new Date().toISOString()
+    }, { merge: true });
+};
+
+/**
+ * Reject admin profile for members gallery
+ */
+export const rejectAdminProfile = async (uid: string, reviewerOrbitId: string, reason?: string): Promise<void> => {
+    const adminRef = doc(db, 'admins', uid);
+    const adminDoc = await getDoc(adminRef);
+
+    if (!adminDoc.exists()) {
+        throw new Error('Admin profile not found');
+    }
+
+    const currentData = adminDoc.data();
+    const updatedProfile = {
+        ...currentData.publicProfile,
+        approvalStatus: 'rejected',
+        reviewedBy: reviewerOrbitId,
+        reviewedAt: new Date().toISOString(),
+        rejectionReason: reason || null
+    };
+
+    await setDoc(adminRef, {
+        ...currentData,
+        publicProfile: updatedProfile,
+        updatedAt: new Date().toISOString()
+    }, { merge: true });
+};
+
+/**
+ * Get single admin profile by UID
+ */
+export const getAdminProfileByUid = async (uid: string) => {
+    const adminDoc = await getDoc(doc(db, 'admins', uid));
+    if (!adminDoc.exists()) {
+        return null;
+    }
+    return adminDoc.data();
+};
+
+/**
+ * Delete admin's public profile (removes from member gallery)
+ */
+export const deleteAdminPublicProfile = async (uid: string): Promise<void> => {
+    const adminRef = doc(db, 'admins', uid);
+    const adminDoc = await getDoc(adminRef);
+
+    if (!adminDoc.exists()) {
+        throw new Error('Admin profile not found');
+    }
+
+    // We update the document by removing the publicProfile field
+    // and updating the updatedAt timestamp
+    await updateDoc(adminRef, {
+        publicProfile: deleteField(),
+        updatedAt: new Date().toISOString()
+    });
 };
 

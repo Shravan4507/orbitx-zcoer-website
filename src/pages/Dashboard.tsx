@@ -9,6 +9,7 @@ import SettingsOverlay from '../components/settings/SettingsOverlay';
 import KeyboardShortcuts from '../components/shortcuts/KeyboardShortcuts';
 import PromoManager from '../components/admin/PromoManager';
 import EventManager from '../components/admin/EventManager';
+import AdminProfileCustomization from '../components/admin/AdminProfileCustomization';
 import { EventModal, type EventData } from '../components/events';
 import { useToast } from '../components/toast/Toast';
 import { SkeletonEventList } from '../components/skeleton/Skeleton';
@@ -61,6 +62,7 @@ export default function Dashboard() {
     const [showManageDropdown, setShowManageDropdown] = useState(false);
     const [isPromoManagerOpen, setIsPromoManagerOpen] = useState(false);
     const [isEventManagerOpen, setIsEventManagerOpen] = useState(false);
+    const [isAdminProfileOpen, setIsAdminProfileOpen] = useState(false);
     const manageDropdownRef = useRef<HTMLDivElement>(null);
 
     // Check admin permissions
@@ -71,6 +73,7 @@ export default function Dashboard() {
     const canManageQueries = isAdmin && hasPermission(ADMIN_PERMISSIONS.MANAGE_QUERIES);
     const canManageMerchOrders = isAdmin && hasPermission(ADMIN_PERMISSIONS.MANAGE_MERCH_ORDERS);
     const canManageMerch = isAdmin && hasPermission(ADMIN_PERMISSIONS.MANAGE_MERCH);
+    const canManageMembers = isAdmin && hasPermission(ADMIN_PERMISSIONS.MANAGE_MEMBERS);
 
     // Recruitment context
     const { isRecruitmentOpen, toggleRecruitment } = useRecruitment();
@@ -148,6 +151,7 @@ export default function Dashboard() {
             else if (isSettingsOpen) setIsSettingsOpen(false);
             else if (isPromoManagerOpen) setIsPromoManagerOpen(false);
             else if (isEventManagerOpen) setIsEventManagerOpen(false);
+            else if (isAdminProfileOpen) setIsAdminProfileOpen(false);
             else if (showManageDropdown) setShowManageDropdown(false);
             else if (menuOpen) setMenuOpen(false);
         },
@@ -174,7 +178,13 @@ export default function Dashboard() {
             id: 'action-members',
             label: 'Members',
             action: () => navigate('/members')
-        }
+        },
+        // Admin-only action for profile customization
+        ...(isAdmin ? [{
+            id: 'action-customize-profile',
+            label: 'Member Card',
+            action: () => setIsAdminProfileOpen(true)
+        }] : [])
     ];
 
     // Close manage dropdown when clicking outside
@@ -446,7 +456,7 @@ export default function Dashboard() {
 
                                 {
                                     /* Admin Manage Dropdown */
-                                    (canManagePromos || canManageEvents || canManageJoin || canManageApplications || canManageQueries || canManageMerchOrders || canManageMerch) && (
+                                    (canManagePromos || canManageEvents || canManageJoin || canManageApplications || canManageQueries || canManageMerchOrders || canManageMerch || canManageMembers) && (
                                         <div className="manage-dropdown" ref={manageDropdownRef}>
                                             <button
                                                 className={`sidebar-action-btn sidebar-action-btn--manage ${showManageDropdown ? 'sidebar-action-btn--active' : ''}`}
@@ -592,6 +602,23 @@ export default function Dashboard() {
                                                                 <line x1="7" y1="7" x2="7.01" y2="7"></line>
                                                             </svg>
                                                             <span>Manage Merch</span>
+                                                        </button>
+                                                    )}
+                                                    {canManageMembers && (
+                                                        <button
+                                                            className="manage-dropdown__item"
+                                                            onClick={() => {
+                                                                setShowManageDropdown(false);
+                                                                navigate('/manage-members');
+                                                            }}
+                                                        >
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                                <circle cx="9" cy="7" r="4"></circle>
+                                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                                            </svg>
+                                                            <span>Member Requests</span>
                                                         </button>
                                                     )}
                                                 </div>
@@ -855,6 +882,14 @@ export default function Dashboard() {
                     onClose={closeEventModal}
                     isRegistered={true}
                     onDownloadPass={handleDownloadFromModal}
+                />
+            )}
+
+            {/* Admin Profile Customization Modal */}
+            {isAdmin && (
+                <AdminProfileCustomization
+                    isOpen={isAdminProfileOpen}
+                    onClose={() => setIsAdminProfileOpen(false)}
                 />
             )}
         </>

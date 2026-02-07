@@ -16,6 +16,7 @@ import Login from '../pages/Login'
 import Signup from '../pages/Signup'
 import ForgotPassword from '../pages/ForgotPassword'
 import Dashboard from '../pages/Dashboard'
+import ManageMembers from '../pages/ManageMembers'
 import AdminSetup from '../components/admin/AdminSetup'
 import ApplicationsManager from '../components/admin/ApplicationsManager'
 import ManageQueries from '../components/admin/ManageQueries'
@@ -102,6 +103,11 @@ function AppContent() {
         <Route path="/manage-merch" element={
           <ProtectedRoute>
             <MerchManager />
+          </ProtectedRoute>
+        } />
+        <Route path="/manage-members" element={
+          <ProtectedRoute>
+            <ManageMembers />
           </ProtectedRoute>
         } />
 

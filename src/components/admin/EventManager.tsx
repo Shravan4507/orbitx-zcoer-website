@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { collection, query, orderBy, onSnapshot, addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../services/firebase/config';
+import { uploadEventImages, deleteAllEventImages } from '../../services/firebase/eventStorage';
 import { useToast } from '../toast/Toast';
 import CustomDatePicker from '../ui/CustomDatePicker';
 import CustomTimePicker from '../ui/CustomTimePicker';
@@ -418,9 +419,26 @@ export default function EventManager({ isOpen, onClose, adminOrbitId }: EventMan
                 }
             }
 
+            const amountValue = newEvent.amount ? parseInt(newEvent.amount, 10) : undefined;
+
             if (editingEvent) {
                 // Update existing event
-                const amountValue = newEvent.amount ? parseInt(newEvent.amount, 10) : undefined;
+                let imageUrls = editingEvent.images || [];
+
+                // Upload new images if any
+                if (selectedFiles.length > 0) {
+                    showToast('Uploading images...', 'info');
+                    const newImageUrls = await uploadEventImages(
+                        editingEvent.id,
+                        selectedFiles,
+                        (current, total) => {
+                            showToast(`Uploading image ${current} of ${total}...`, 'info');
+                        }
+                    );
+                    // Append new images to existing ones
+                    imageUrls = [...imageUrls, ...newImageUrls];
+                }
+
                 await updateDoc(doc(db, 'events', editingEvent.id), {
                     title: newEvent.title.trim(),
                     description: newEvent.description.trim(),
@@ -433,7 +451,8 @@ export default function EventManager({ isOpen, onClose, adminOrbitId }: EventMan
                     registrationDeadline: newEvent.registrationDeadline,
                     eligibility: newEvent.eligibility,
                     speakers: newEvent.speakers.split(',').map(s => s.trim()).filter(Boolean),
-                    imagePositions: previewUrls.length > 0 || editingEvent.images.length > 0 ? { '0': imagePosition } : undefined,
+                    images: imageUrls,
+                    imagePositions: imageUrls.length > 0 ? { '0': imagePosition } : undefined,
                     amount: amountValue && amountValue > 0 ? amountValue : null,
                     updatedAt: new Date().toISOString(),
                 });
@@ -441,13 +460,12 @@ export default function EventManager({ isOpen, onClose, adminOrbitId }: EventMan
                 showToast('Event updated successfully!', 'success');
             } else {
                 // Create new event
-                const amountValue = newEvent.amount ? parseInt(newEvent.amount, 10) : undefined;
-
                 // Generate unique Event ID (EVT-YYYY-XXXX)
                 const eventId = await generateEventId();
 
+                // First create the event without images to get the document ID
                 const eventData: Omit<AdminEvent, 'id'> = {
-                    eventId, // Immutable once created
+                    eventId,
                     title: newEvent.title.trim(),
                     description: newEvent.description.trim(),
                     date: newEvent.date,
@@ -458,19 +476,37 @@ export default function EventManager({ isOpen, onClose, adminOrbitId }: EventMan
                     registrationDeadline: newEvent.registrationDeadline,
                     eligibility: newEvent.eligibility,
                     speakers: newEvent.speakers.split(',').map(s => s.trim()).filter(Boolean),
-                    images: selectedFiles.map(f => f.name),
+                    images: [], // Will be updated after upload
                     registrationOpen: true,
                     isPast: false,
                     createdBy: adminOrbitId,
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString(),
-                    // Only include optional fields if they have values
                     ...(newEvent.venueUrl.trim() && { venueUrl: newEvent.venueUrl.trim() }),
-                    ...(previewUrls.length > 0 && { imagePositions: { '0': imagePosition } }),
                     ...(amountValue && amountValue > 0 && { amount: amountValue }),
                 };
 
-                await addDoc(collection(db, 'events'), eventData);
+                const docRef = await addDoc(collection(db, 'events'), eventData);
+
+                // Upload images using the document ID
+                if (selectedFiles.length > 0) {
+                    showToast('Uploading images...', 'info');
+                    const imageUrls = await uploadEventImages(
+                        docRef.id,
+                        selectedFiles,
+                        (current, total) => {
+                            showToast(`Uploading image ${current} of ${total}...`, 'info');
+                        }
+                    );
+
+                    // Update the event with image URLs
+                    await updateDoc(docRef, {
+                        images: imageUrls,
+                        imagePositions: { '0': imagePosition },
+                        updatedAt: new Date().toISOString(),
+                    });
+                }
+
                 showToast('Event created successfully!', 'success');
             }
 
@@ -527,6 +563,12 @@ export default function EventManager({ isOpen, onClose, adminOrbitId }: EventMan
         }
 
         try {
+            // Delete images from storage first
+            if (event.images && event.images.length > 0) {
+                await deleteAllEventImages(event.id);
+            }
+
+            // Delete the Firestore document
             await deleteDoc(doc(db, 'events', event.id));
             showToast('Event deleted', 'success');
         } catch (error) {
@@ -591,13 +633,28 @@ export default function EventManager({ isOpen, onClose, adminOrbitId }: EventMan
                                     events.map((event) => (
                                         <div key={event.id} className={`event-manager__item ${event.isPast ? 'event-manager__item--past' : ''}`}>
                                             <div className="event-manager__item-preview">
-                                                <div className="event-manager__item-placeholder">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                                        <polyline points="21 15 16 10 5 21"></polyline>
-                                                    </svg>
-                                                </div>
+                                                {event.images && event.images.length > 0 ? (
+                                                    <img
+                                                        src={event.images[0]}
+                                                        alt={event.title}
+                                                        style={{
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            objectFit: 'cover',
+                                                            objectPosition: event.imagePositions?.['0']
+                                                                ? `${event.imagePositions['0'].x}% ${event.imagePositions['0'].y}%`
+                                                                : 'center'
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <div className="event-manager__item-placeholder">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                                            <polyline points="21 15 16 10 5 21"></polyline>
+                                                        </svg>
+                                                    </div>
+                                                )}
                                             </div>
                                             <div className="event-manager__item-info">
                                                 <div className="event-manager__item-header">

@@ -193,6 +193,44 @@ export const TEAM_POSITION_OPTIONS = [
     { value: 'member', label: 'Member' }
 ] as const;
 
+// Admin Profile Social Links (for public member card)
+export interface AdminSocialLinks {
+    instagram?: string;
+    facebook?: string;
+    snapchat?: string;
+    linkedin?: string;
+    github?: string;
+    twitter?: string;
+    whatsapp?: string;
+    contactNumber?: string;
+}
+
+// Admin Public Profile Approval Status
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
+
+// Admin Public Profile (for member card display)
+export interface AdminPublicProfile {
+    // Display image for member card (from Firebase Storage)
+    displayImage?: string;
+    // Academic info for card
+    academicYear?: string; // e.g., "3rd Year"
+    major?: string; // e.g., "Computer Engineering"
+    division?: string; // e.g., "A"
+    graduationYear?: string; // e.g., "2027"
+    // Social links
+    socialLinks?: AdminSocialLinks;
+    // Profile visibility
+    isProfilePublic?: boolean;
+    // Approval status - profiles need approval to be shown on members gallery
+    approvalStatus?: ApprovalStatus;
+    // Timestamp when profile was submitted for approval
+    submittedAt?: string;
+    // Who approved/rejected and when
+    reviewedBy?: string;
+    reviewedAt?: string;
+    rejectionReason?: string;
+}
+
 // Admin Profile interface
 export interface AdminProfile {
     uid: string;
@@ -221,6 +259,8 @@ export interface AdminProfile {
     courseName?: string;
     yearOfStudy?: string;
     yearOfGraduation?: string;
+    // Extended public profile for member card
+    publicProfile?: AdminPublicProfile;
 }
 
 // ==================== PERMISSION TYPES ====================

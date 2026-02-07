@@ -1,0 +1,207 @@
+/**
+ * ImageCropper - Simple WordPress-style
+ */
+
+/* Overlay */
+.image-cropper-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.75);
+}
+
+/* Modal */
+.image-cropper-modal {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 5px 40px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+/* Header */
+.image-cropper-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    flex-shrink: 0;
+}
+
+.image-cropper-header span {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e1e1e;
+}
+
+.image-cropper-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    font-size: 22px;
+    line-height: 1;
+    color: #666;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.15s;
+}
+
+.image-cropper-close:hover {
+    background: #f0f0f0;
+    color: #1e1e1e;
+}
+
+/* Body - Cropper Area */
+.image-cropper-body {
+    height: 320px;
+    background: #1a1a1a;
+    flex-shrink: 0;
+}
+
+/* Cropper.js Styling */
+.image-cropper-body .cropper-container {
+    background: #1a1a1a !important;
+}
+
+.image-cropper-body .cropper-view-box {
+    outline: 2px solid #fff;
+    outline-offset: -2px;
+}
+
+.image-cropper-body .cropper-line {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.image-cropper-body .cropper-point {
+    width: 12px;
+    height: 12px;
+    background-color: #fff;
+    opacity: 1;
+    border-radius: 0;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.image-cropper-body .cropper-point.point-se {
+    width: 12px;
+    height: 12px;
+}
+
+.image-cropper-body .cropper-dashed {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.image-cropper-body .cropper-face {
+    background-color: transparent;
+}
+
+.image-cropper-body .cropper-modal {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.image-cropper-body .cropper-center {
+    display: block;
+}
+
+/* Footer - ALWAYS VISIBLE */
+.image-cropper-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #f0f0f0;
+    border-top: 1px solid #ddd;
+    flex-shrink: 0;
+}
+
+.image-cropper-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Buttons */
+.image-cropper-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.image-cropper-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.image-cropper-btn--reset {
+    background: none;
+    border: none;
+    color: #2271b1;
+    padding: 8px 12px;
+}
+
+.image-cropper-btn--reset:hover:not(:disabled) {
+    color: #135e96;
+    text-decoration: underline;
+}
+
+.image-cropper-btn--reset svg {
+    color: currentColor;
+}
+
+.image-cropper-btn--cancel {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    color: #2c3338;
+}
+
+.image-cropper-btn--cancel:hover:not(:disabled) {
+    background: #f6f7f7;
+    border-color: #8c8f94;
+    color: #1d2327;
+}
+
+.image-cropper-btn--crop {
+    background: #2271b1;
+    border: 1px solid #2271b1;
+    color: #fff;
+}
+
+.image-cropper-btn--crop:hover:not(:disabled) {
+    background: #135e96;
+    border-color: #135e96;
+}
+
+/* Mobile */
+@media (max-width: 540px) {
+    .image-cropper-overlay {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .image-cropper-modal {
+        max-width: 100%;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .image-cropper-body {
+        height: 280px;
+    }
+}

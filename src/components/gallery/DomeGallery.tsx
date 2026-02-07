@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useCallback } from 'react';
 import { useGesture } from '@use-gesture/react';
 import './DomeGallery.css';
-import membersData from '../../data/members.json';
 
 // Member type from JSON
 type MemberAcademics = {
@@ -16,18 +15,10 @@ type MemberSocialLinks = {
     linkedin?: string;
     github?: string;
     twitter?: string;
-};
-
-type MemberData = {
-    id: string;
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-    team: string;
-    position: string;
-    academics: MemberAcademics;
-    socialLinks: MemberSocialLinks;
-    image: string;
+    facebook?: string;
+    snapchat?: string;
+    whatsapp?: string;
+    contactNumber?: string;
 };
 
 type ImageItem = string | {
@@ -83,46 +74,8 @@ type ItemDef = {
     sizeY: number;
 };
 
-// Transform members JSON data to ImageItem format
-const transformMembersToImages = (members: MemberData[]): ImageItem[] => {
-    // Get base URL from Vite (handles GitHub Pages subdirectory)
-    const baseUrl = import.meta.env.BASE_URL || '/';
-
-    return members
-        .filter(m => m.firstName && m.lastName) // Only include members with names
-        .map(member => {
-            // Handle image path - if it's just a filename, prepend base + /members/
-            // If it's a full path or URL, use as-is
-            let imageSrc = '';
-            if (member.image) {
-                if (member.image.startsWith('http')) {
-                    // External URL - use as-is
-                    imageSrc = member.image;
-                } else if (member.image.startsWith('/')) {
-                    // Absolute path - prepend base URL
-                    imageSrc = baseUrl + member.image.slice(1);
-                } else {
-                    // Just filename - serve from public/members folder
-                    imageSrc = `${baseUrl}members/${member.image}`;
-                }
-            }
-
-            return {
-                src: imageSrc,
-                alt: `${member.firstName} ${member.lastName}`,
-                name: `${member.firstName} ${member.lastName}`,
-                role: member.position,
-                team: member.team,
-                bio: '', // Could be added to JSON later
-                academics: member.academics,
-                socialLinks: member.socialLinks,
-                dateOfBirth: member.dateOfBirth
-            };
-        });
-};
-
-// Use actual members data from JSON
-const DEFAULT_IMAGES: ImageItem[] = transformMembersToImages(membersData.members as MemberData[]);
+// No default images - all data comes from ResponsiveGallery via props
+const DEFAULT_IMAGES: ImageItem[] = [];
 
 const DEFAULTS = {
     maxVerticalRotationDeg: 5,
@@ -671,7 +624,16 @@ export default function DomeGallery({
 
         // Parse JSON data attributes
         let memberAcademics: { year?: string; branch?: string; division?: string; yearOfGraduation?: string } = {};
-        let memberSocialLinks: { instagram?: string; linkedin?: string; github?: string; twitter?: string } = {};
+        let memberSocialLinks: {
+            instagram?: string;
+            linkedin?: string;
+            github?: string;
+            twitter?: string;
+            facebook?: string;
+            snapchat?: string;
+            whatsapp?: string;
+            contactNumber?: string;
+        } = {};
 
         try {
             if (parent.dataset.academics) {
@@ -814,7 +776,14 @@ export default function DomeGallery({
                 }
 
                 // ===== SOCIAL LINKS SECTION =====
-                const hasSocialLinks = memberSocialLinks.instagram || memberSocialLinks.linkedin || memberSocialLinks.github || memberSocialLinks.twitter;
+                const hasSocialLinks = memberSocialLinks.instagram ||
+                    memberSocialLinks.linkedin ||
+                    memberSocialLinks.github ||
+                    memberSocialLinks.twitter ||
+                    memberSocialLinks.facebook ||
+                    memberSocialLinks.snapchat ||
+                    memberSocialLinks.whatsapp ||
+                    memberSocialLinks.contactNumber;
                 if (hasSocialLinks) {
                     const socialTitle = document.createElement('div');
                     socialTitle.className = 'enlarge__expanded-title';
@@ -866,6 +835,53 @@ export default function DomeGallery({
                         xLink.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`;
                         xLink.onclick = (evt) => evt.stopPropagation();
                         socialLinksContainer.appendChild(xLink);
+                    }
+
+                    if (memberSocialLinks.facebook) {
+                        const fbLink = document.createElement('a');
+                        fbLink.href = memberSocialLinks.facebook;
+                        fbLink.target = '_blank';
+                        fbLink.rel = 'noopener noreferrer';
+                        fbLink.className = 'enlarge__social-link enlarge__social-link--facebook';
+                        fbLink.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385h-3.047v-3.47h3.047v-2.642c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.514c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385c5.737-.9 10.125-5.864 10.125-11.854z"/></svg>`;
+                        fbLink.onclick = (evt) => evt.stopPropagation();
+                        socialLinksContainer.appendChild(fbLink);
+                    }
+
+                    if (memberSocialLinks.snapchat) {
+                        const scLink = document.createElement('a');
+                        // If it doesn't look like a URL, assume it's a username
+                        scLink.href = memberSocialLinks.snapchat.startsWith('http')
+                            ? memberSocialLinks.snapchat
+                            : `https://www.snapchat.com/add/${memberSocialLinks.snapchat}`;
+                        scLink.target = '_blank';
+                        scLink.rel = 'noopener noreferrer';
+                        scLink.className = 'enlarge__social-link enlarge__social-link--snapchat';
+                        scLink.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>`;
+                        scLink.onclick = (evt) => evt.stopPropagation();
+                        socialLinksContainer.appendChild(scLink);
+                    }
+
+                    if (memberSocialLinks.whatsapp) {
+                        const waLink = document.createElement('a');
+                        // Sanitize number: remove spaces, plus, brackets
+                        const cleanNumber = memberSocialLinks.whatsapp.replace(/[^\d]/g, '');
+                        waLink.href = `https://wa.me/${cleanNumber}`;
+                        waLink.target = '_blank';
+                        waLink.rel = 'noopener noreferrer';
+                        waLink.className = 'enlarge__social-link enlarge__social-link--whatsapp';
+                        waLink.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
+                        waLink.onclick = (evt) => evt.stopPropagation();
+                        socialLinksContainer.appendChild(waLink);
+                    }
+
+                    if (memberSocialLinks.contactNumber) {
+                        const telLink = document.createElement('a');
+                        telLink.href = `tel:${memberSocialLinks.contactNumber}`;
+                        telLink.className = 'enlarge__social-link enlarge__social-link--phone';
+                        telLink.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
+                        telLink.onclick = (evt) => evt.stopPropagation();
+                        socialLinksContainer.appendChild(telLink);
                     }
 
                     rightPanel.appendChild(socialLinksContainer);
