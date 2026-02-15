@@ -319,8 +319,10 @@ export interface Promotion {
     title: string;
     mediaUrl: string;
     mediaType: PromotionMediaType;
-    // File reference (for when Storage is not available)
+    // File reference
     fileName?: string;
+    // Firebase Storage location for deletion
+    storagePath?: string;
     // Clickable link
     linkUrl?: string;
     // Display settings

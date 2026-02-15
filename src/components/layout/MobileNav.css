@@ -9,11 +9,11 @@
     padding: 0.5rem 0.5rem;
     padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0));
     background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    border-top-left-radius: 24px;
-    border-top-right-radius: 24px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-top-left-radius: 2rem;
+    border-top-right-radius: 2rem;
     /* Slide transition */
     transform: translateY(0);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -177,9 +177,10 @@
     }
 }
 
-/* Add bottom padding to body on mobile to prevent content from hiding behind nav */
+/* Add padding to body on mobile to prevent content from hiding behind navs */
 @media (max-width: 768px) {
     body {
+        padding-top: 70px;
         padding-bottom: calc(70px + env(safe-area-inset-bottom, 0));
     }
 }

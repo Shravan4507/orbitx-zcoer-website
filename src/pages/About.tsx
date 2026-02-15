@@ -1,6 +1,7 @@
 import './About.css';
 import Footer from '../components/layout/Footer';
 import ScrollReveal from '../components/scroll/ScrollReveal';
+import zcoerLogo from '../assets/logo/ZCOER-Logo-White.png';
 
 export default function About() {
     return (
@@ -9,6 +10,12 @@ export default function About() {
                 <ScrollReveal direction="fade">
                     <section className="about-hero">
                         <div className="about-hero__content">
+                            <div className="heritage-badge">
+                                <a href="https://zcoer.in" target="_blank" rel="noopener noreferrer" className="heritage-badge__link">
+                                    <img src={zcoerLogo} alt="ZCOER Logo" className="heritage-badge__logo" />
+                                </a>
+                                <span className="heritage-badge__text">ZCOER Official Student Initiative</span>
+                            </div>
                             <h1 className="about-hero__title">About OrbitX</h1>
                             <p className="about-hero__text">
                                 OrbitX is a student-driven space and astronomy organization focused on exploring space technology,

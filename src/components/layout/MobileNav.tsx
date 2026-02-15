@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRecruitment } from '../../contexts/RecruitmentContext';
@@ -105,24 +105,14 @@ const NAV_ITEMS = [
     }
 ];
 
-// Auto-hide delay in ms
-const AUTO_HIDE_DELAY = 3000;
-// Scroll threshold in pixels to trigger hide/show
-const SCROLL_THRESHOLD = 10;
-
 export default function MobileNav() {
     const location = useLocation();
     const { user, profile } = useAuth();
     const { isRecruitmentOpen } = useRecruitment();
     const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
     const [isMobile, setIsMobile] = useState(false);
-    const [isVisible, setIsVisible] = useState(true);
-    const [isInteracting, setIsInteracting] = useState(false);
 
     const touchTimerRef = useRef<NodeJS.Timeout | null>(null);
-    const autoHideTimerRef = useRef<NodeJS.Timeout | null>(null);
-    const lastScrollY = useRef(0);
-    const navRef = useRef<HTMLElement>(null);
 
     // Check if mobile on mount and resize
     useEffect(() => {
@@ -135,130 +125,14 @@ export default function MobileNav() {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    // Reset auto-hide timer
-    const resetAutoHideTimer = useCallback(() => {
-        if (autoHideTimerRef.current) {
-            clearTimeout(autoHideTimerRef.current);
-        }
-
-        // Only start auto-hide if nav is visible and not being interacted with
-        if (isVisible && !isInteracting) {
-            autoHideTimerRef.current = setTimeout(() => {
-                setIsVisible(false);
-            }, AUTO_HIDE_DELAY);
-        }
-    }, [isVisible, isInteracting]);
-
-    // Handle scroll behavior
-    useEffect(() => {
-        if (!isMobile) return;
-
-        const handleScroll = () => {
-            // Don't hide if user is interacting with the navbar
-            if (isInteracting) return;
-
-            const currentScrollY = window.scrollY;
-            const scrollDelta = currentScrollY - lastScrollY.current;
-
-            // Scrolling down (page going up) - hide navbar
-            if (scrollDelta > SCROLL_THRESHOLD) {
-                setIsVisible(false);
-            }
-            // Scrolling up (page going down) - show navbar
-            else if (scrollDelta < -SCROLL_THRESHOLD) {
-                setIsVisible(true);
-                resetAutoHideTimer();
-            }
-
-            lastScrollY.current = currentScrollY;
-        };
-
-        // Throttle scroll handler
-        let ticking = false;
-        const throttledScroll = () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    handleScroll();
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        };
-
-        window.addEventListener('scroll', throttledScroll, { passive: true });
-        return () => window.removeEventListener('scroll', throttledScroll);
-    }, [isMobile, isInteracting, resetAutoHideTimer]);
-
-    // Handle focus/blur (tab visibility)
-    useEffect(() => {
-        if (!isMobile) return;
-
-        const handleVisibilityChange = () => {
-            if (document.hidden && !isInteracting) {
-                // Tab lost focus - hide navbar (only if not interacting)
-                setIsVisible(false);
-            } else if (!document.hidden) {
-                // Tab gained focus - show navbar briefly
-                setIsVisible(true);
-                resetAutoHideTimer();
-            }
-        };
-
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-        return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-    }, [isMobile, isInteracting, resetAutoHideTimer]);
-
-    // Start auto-hide timer on mount
-    useEffect(() => {
-        if (isMobile) {
-            resetAutoHideTimer();
-        }
-
-        return () => {
-            if (autoHideTimerRef.current) {
-                clearTimeout(autoHideTimerRef.current);
-            }
-        };
-    }, [isMobile, resetAutoHideTimer]);
-
-    // Touch anywhere on screen shows navbar
-    useEffect(() => {
-        if (!isMobile) return;
-
-        const handleTouch = () => {
-            if (!isVisible) {
-                setIsVisible(true);
-            }
-            resetAutoHideTimer();
-        };
-
-        window.addEventListener('touchstart', handleTouch, { passive: true });
-        return () => window.removeEventListener('touchstart', handleTouch);
-    }, [isMobile, isVisible, resetAutoHideTimer]);
-
-    // Handle nav interaction (pause auto-hide while touching nav)
-    const handleNavTouchStart = () => {
-        setIsInteracting(true);
-        if (autoHideTimerRef.current) {
-            clearTimeout(autoHideTimerRef.current);
-        }
-    };
-
-    const handleNavTouchEnd = () => {
-        setIsInteracting(false);
-        resetAutoHideTimer();
-    };
-
-    // Handle long press for tooltip
+    // Tooltip handlers
     const handleTouchStart = (id: string) => {
-        handleNavTouchStart();
         touchTimerRef.current = setTimeout(() => {
             setActiveTooltip(id);
         }, 500); // Show tooltip after 500ms hold
     };
 
     const handleTouchEnd = () => {
-        handleNavTouchEnd();
         if (touchTimerRef.current) {
             clearTimeout(touchTimerRef.current);
         }
@@ -276,12 +150,7 @@ export default function MobileNav() {
     });
 
     return (
-        <nav
-            ref={navRef}
-            className={`mobile-nav ${isVisible ? 'mobile-nav--visible' : 'mobile-nav--hidden'}`}
-            onTouchStart={handleNavTouchStart}
-            onTouchEnd={handleNavTouchEnd}
-        >
+        <nav className="mobile-nav mobile-nav--visible">
             <div className="mobile-nav__container">
                 {visibleItems.map((item) => {
                     // Handle recruitment-dependent items

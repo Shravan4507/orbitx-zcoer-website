@@ -35,7 +35,7 @@ export type MemberData = {
     position: string;
     academics: MemberAcademics;
     socialLinks: MemberSocialLinks;
-    image: string;
+    image: string | null;
 };
 
 // Team name mapping for display
@@ -94,7 +94,7 @@ export function useMembersData() {
                         yearOfGraduation: admin.publicProfile?.graduationYear || ''
                     },
                     socialLinks: admin.publicProfile?.socialLinks || {},
-                    image: admin.publicProfile?.displayImage || ''
+                    image: admin.publicProfile?.displayImage || null
                 }));
 
                 setMembers(memberData);

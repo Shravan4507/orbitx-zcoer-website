@@ -74,6 +74,13 @@ body {
   outline-offset: 2px;
 }
 
+/* Desktop-only elements */
+@media (max-width: 768px) {
+  .desktop-only-back-button {
+    display: none !important;
+  }
+}
+
 /* Disable hover effects on touch devices */
 @media (hover: none) and (pointer: coarse) {
 

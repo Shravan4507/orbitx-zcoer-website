@@ -8,7 +8,7 @@ import {
 import type { User as FirebaseUser } from 'firebase/auth';
 import { doc, setDoc, getDoc, collection, query, getDocs, updateDoc, arrayUnion, arrayRemove, deleteDoc, deleteField } from 'firebase/firestore';
 import { auth, db, googleProvider } from './config';
-import type { UserProfile } from '@/types/user';
+import type { UserProfile, ApprovalStatus } from '@/types/user';
 
 // ==================== ORBIT ID GENERATION ====================
 
@@ -666,30 +666,39 @@ export const updateAdminPublicProfile = async (uid: string, publicProfile: {
  * Only returns APPROVED profiles with isProfilePublic === true
  */
 export const getPublicAdminProfiles = async () => {
-    const adminsQuery = query(collection(db, 'admins'));
-    const snapshot = await getDocs(adminsQuery);
+    try {
+        // Fetch from the clean, public-only collection
+        const q = query(collection(db, 'public_members'));
+        const snapshot = await getDocs(q);
 
-    return snapshot.docs
-        .map(doc => {
-            const data = doc.data();
-            return {
-                id: doc.id,
-                uid: data.uid,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                dateOfBirth: data.dateOfBirth,
-                team: data.team,
-                position: data.position,
-                publicProfile: data.publicProfile || {}
-            };
-        })
-        .filter(admin =>
-            // Only include if profile is APPROVED, public, and has at least a name
-            admin.publicProfile?.approvalStatus === 'approved' &&
-            admin.publicProfile?.isProfilePublic !== false &&
-            admin.firstName &&
-            admin.firstName.trim() !== ''
-        );
+        return snapshot.docs
+            .map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    uid: data.uid,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    dateOfBirth: data.dateOfBirth || '',
+                    team: data.team,
+                    position: data.position,
+                    publicProfile: data.publicProfile || {}
+                };
+            })
+            .filter(admin => {
+                const pp = admin.publicProfile;
+                // Double check visibility in case it was toggled off without removing from collection
+                return (
+                    pp?.approvalStatus === 'approved' &&
+                    pp?.isProfilePublic !== false &&
+                    admin.firstName &&
+                    admin.firstName.trim() !== ''
+                );
+            });
+    } catch (error) {
+        console.error('Error fetching public members:', error);
+        return [];
+    }
 };
 
 /**
@@ -738,17 +747,32 @@ export const approveAdminProfile = async (uid: string, reviewerOrbitId: string):
     const currentData = adminDoc.data();
     const updatedProfile = {
         ...currentData.publicProfile,
-        approvalStatus: 'approved',
+        approvalStatus: 'approved' as ApprovalStatus,
         reviewedBy: reviewerOrbitId,
         reviewedAt: new Date().toISOString(),
         rejectionReason: null
     };
 
+    // 1. Update master admin record
     await setDoc(adminRef, {
         ...currentData,
         publicProfile: updatedProfile,
         updatedAt: new Date().toISOString()
     }, { merge: true });
+
+    // 2. Sync to public_members collection for unauthenticated access
+    const publicRef = doc(db, 'public_members', uid);
+    await setDoc(publicRef, {
+        uid,
+        orbitId: currentData.orbitId,
+        firstName: currentData.firstName,
+        lastName: currentData.lastName,
+        dateOfBirth: currentData.dateOfBirth || '',
+        team: currentData.team,
+        position: currentData.position,
+        publicProfile: updatedProfile,
+        updatedAt: new Date().toISOString()
+    });
 };
 
 /**
@@ -765,17 +789,22 @@ export const rejectAdminProfile = async (uid: string, reviewerOrbitId: string, r
     const currentData = adminDoc.data();
     const updatedProfile = {
         ...currentData.publicProfile,
-        approvalStatus: 'rejected',
+        approvalStatus: 'rejected' as ApprovalStatus,
         reviewedBy: reviewerOrbitId,
         reviewedAt: new Date().toISOString(),
         rejectionReason: reason || null
     };
 
+    // 1. Update master admin record
     await setDoc(adminRef, {
         ...currentData,
         publicProfile: updatedProfile,
         updatedAt: new Date().toISOString()
     }, { merge: true });
+
+    // 2. Remove from public_members if it was previously approved
+    const publicRef = doc(db, 'public_members', uid);
+    await deleteDoc(publicRef);
 };
 
 /**
@@ -794,17 +823,15 @@ export const getAdminProfileByUid = async (uid: string) => {
  */
 export const deleteAdminPublicProfile = async (uid: string): Promise<void> => {
     const adminRef = doc(db, 'admins', uid);
-    const adminDoc = await getDoc(adminRef);
 
-    if (!adminDoc.exists()) {
-        throw new Error('Admin profile not found');
-    }
-
-    // We update the document by removing the publicProfile field
-    // and updating the updatedAt timestamp
+    // 1. Remove from master admin record
     await updateDoc(adminRef, {
         publicProfile: deleteField(),
         updatedAt: new Date().toISOString()
     });
+
+    // 2. Remove from public_members
+    const publicRef = doc(db, 'public_members', uid);
+    await deleteDoc(publicRef);
 };
 

@@ -26,6 +26,48 @@
     flex-direction: column;
 }
 
+.heritage-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: fit-content;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    margin-bottom: 2rem;
+}
+
+.heritage-badge__link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: none !important;
+    cursor: pointer;
+}
+
+.heritage-badge__link:hover {
+    transform: none !important;
+    opacity: 1 !important;
+}
+
+.heritage-badge__logo {
+    height: 24px;
+    width: auto;
+    filter: brightness(0) invert(1);
+    opacity: 1;
+}
+
+.heritage-badge__text {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .about-hero__title {
     font-size: 4rem;
     font-weight: 600;
@@ -288,6 +330,10 @@
         gap: 2rem;
         padding: 8rem 0 3rem;
         text-align: center;
+    }
+
+    .about-hero__content {
+        align-items: center;
     }
 
     .about-hero__title {

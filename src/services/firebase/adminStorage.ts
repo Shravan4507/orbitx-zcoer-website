@@ -5,7 +5,7 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage
 import { storage } from './config';
 
 // Storage paths
-const ADMIN_PROFILE_IMAGES_PATH = 'admin-profiles';
+const ADMIN_PROFILE_IMAGES_PATH = 'members-profiles';
 
 /**
  * Upload admin profile display image

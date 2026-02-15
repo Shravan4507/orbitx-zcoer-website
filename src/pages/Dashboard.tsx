@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, query, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase/config';
@@ -58,6 +58,92 @@ export default function Dashboard() {
     // Highlight event image
     const [highlightEventImage, setHighlightEventImage] = useState<string | null>(null);
 
+    // Promotions from Firestore
+    const [promos, setPromos] = useState<Promotion[]>([]);
+
+    // Fetch promotions from Firestore
+    useEffect(() => {
+        const q = query(collection(db, 'promotions'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const fetchedPromos: Promotion[] = [];
+            snapshot.forEach((doc) => {
+                const data = doc.data() as Promotion;
+                if (data.isActive) {
+                    fetchedPromos.push({ ...data, id: doc.id });
+                }
+            });
+            fetchedPromos.sort((a, b) => (a.priority || 0) - (b.priority || 0));
+            setPromos(fetchedPromos);
+        }, (error) => {
+            console.error('Error fetching promotions:', error);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    // Reset promo index if it goes out of bounds
+    useEffect(() => {
+        if (promoIndex >= promos.length && promos.length > 0) {
+            setPromoIndex(0);
+        }
+    }, [promos.length, promoIndex]);
+
+    // Fetch user registrations for dashboard highlight and My Events
+    useEffect(() => {
+        if (orbitId && orbitId !== 'ORB-XXX-0000') {
+            setIsEventsLoading(true);
+            getUserRegistrations(orbitId)
+                .then(registrations => {
+                    setUserRegistrations(registrations);
+                })
+                .catch(error => {
+                    console.error('Error fetching registrations:', error);
+                })
+                .finally(() => {
+                    setIsEventsLoading(false);
+                });
+        }
+    }, [orbitId]);
+
+    // Dynamic Promo Logic
+    const promoTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const touchStartRef = useRef<number | null>(null);
+    const touchEndRef = useRef<number | null>(null);
+
+    const nextPromo = useCallback(() => {
+        if (promos.length > 1) {
+            setPromoIndex(prev => (prev + 1) % promos.length);
+        }
+    }, [promos.length]);
+
+    const prevPromo = useCallback(() => {
+        if (promos.length > 1) {
+            setPromoIndex(prev => (prev - 1 + promos.length) % promos.length);
+        }
+    }, [promos.length]);
+
+    // Touch handlers for swipe
+    const handleTouchStart = (e: React.TouchEvent) => {
+        touchStartRef.current = e.targetTouches[0].clientX;
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        touchEndRef.current = e.targetTouches[0].clientX;
+    };
+
+    const handleTouchEnd = () => {
+        if (!touchStartRef.current || !touchEndRef.current) return;
+        const distance = touchStartRef.current - touchEndRef.current;
+        const isSignificantSwipe = Math.abs(distance) > 50;
+
+        if (isSignificantSwipe) {
+            if (distance > 0) nextPromo(); // Swipe left -> next
+            else prevPromo(); // Swipe right -> prev
+        }
+
+        touchStartRef.current = null;
+        touchEndRef.current = null;
+    };
+
     // Admin state
     const [showManageDropdown, setShowManageDropdown] = useState(false);
     const [isPromoManagerOpen, setIsPromoManagerOpen] = useState(false);
@@ -82,12 +168,9 @@ export default function Dashboard() {
     // Auto-scroll sidebar to make dropdown visible when opened
     useEffect(() => {
         if (showManageDropdown && manageDropdownRef.current) {
-            // Small delay for smoother visual transition
             const timer = setTimeout(() => {
-                // Find the scrollable sidebar container
                 const sidebarZone = manageDropdownRef.current?.closest('.sidebar-zone--middle');
                 if (sidebarZone) {
-                    // Scroll to the bottom to show the dropdown
                     sidebarZone.scrollTo({
                         top: sidebarZone.scrollHeight,
                         behavior: 'smooth'
@@ -98,51 +181,25 @@ export default function Dashboard() {
         }
     }, [showManageDropdown]);
 
-    // Promotions from Firestore
-    const [promos, setPromos] = useState<Promotion[]>([]);
-
-    // Fetch promotions from Firestore
+    // Dynamic slide timer
     useEffect(() => {
-        // Simple query - filter and sort client-side to avoid composite index requirement
-        const q = query(collection(db, 'promotions'));
-
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const fetchedPromos: Promotion[] = [];
-            snapshot.forEach((doc) => {
-                const data = doc.data() as Promotion;
-                // Only include active promotions
-                if (data.isActive) {
-                    fetchedPromos.push({ ...data, id: doc.id });
-                }
-            });
-            // Sort by priority
-            fetchedPromos.sort((a, b) => (a.priority || 0) - (b.priority || 0));
-            setPromos(fetchedPromos);
-        }, (error) => {
-            console.error('Error fetching promotions:', error);
-        });
-
-        return () => unsubscribe();
-    }, []);
-
-    // Fetch user registrations for dashboard highlight and My Events
-    useEffect(() => {
-        if (orbitId && orbitId !== 'ORB-XXX-0000') {
-            console.log('Fetching registrations for user:', orbitId);
-            setIsEventsLoading(true);
-            getUserRegistrations(orbitId)
-                .then(registrations => {
-                    console.log('Dashboard received registrations:', registrations);
-                    setUserRegistrations(registrations);
-                })
-                .catch(error => {
-                    console.error('Error fetching registrations:', error);
-                })
-                .finally(() => {
-                    setIsEventsLoading(false);
-                });
+        if (promos.length <= 1) return;
+        if (promoTimerRef.current) {
+            clearInterval(promoTimerRef.current);
+            promoTimerRef.current = null;
         }
-    }, [orbitId]);
+
+        const currentPromo = promos[promoIndex];
+        if (currentPromo?.mediaType !== 'video') {
+            promoTimerRef.current = setInterval(() => {
+                nextPromo();
+            }, 6000);
+        }
+
+        return () => {
+            if (promoTimerRef.current) clearInterval(promoTimerRef.current);
+        };
+    }, [promos, promoIndex, nextPromo]);
 
     useKeyboardShortcuts({
         onEscape: () => {
@@ -179,7 +236,6 @@ export default function Dashboard() {
             label: 'Members',
             action: () => navigate('/members')
         },
-        // Admin-only action for profile customization
         ...(isAdmin ? [{
             id: 'action-customize-profile',
             label: 'Member Card',
@@ -218,14 +274,6 @@ export default function Dashboard() {
             setMenuOpen(true);
         }
     };
-
-    useEffect(() => {
-        if (promos.length <= 1) return;
-        const interval = setInterval(() => {
-            setPromoIndex(prev => (prev + 1) % promos.length);
-        }, 6000);
-        return () => clearInterval(interval);
-    }, [promos.length]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -406,7 +454,12 @@ export default function Dashboard() {
                 <div className="dashboard-sidebar">
                     <div className="dashboard-sidebar-container">
                         <div className="sidebar-zone sidebar-zone--top">
-                            <div className="promo-screen">
+                            <div
+                                className="promo-screen"
+                                onTouchStart={handleTouchStart}
+                                onTouchMove={handleTouchMove}
+                                onTouchEnd={handleTouchEnd}
+                            >
                                 {promos.length > 0 ? (
                                     <>
                                         {promos.map((promo, index) => (
@@ -417,7 +470,14 @@ export default function Dashboard() {
                                                 style={{ cursor: promo.linkUrl ? 'pointer' : 'default' }}
                                             >
                                                 {promo.mediaType === 'video' ? (
-                                                    <video src={promo.mediaUrl} autoPlay muted loop playsInline />
+                                                    <video
+                                                        src={promo.mediaUrl}
+                                                        autoPlay
+                                                        muted
+                                                        playsInline
+                                                        onEnded={nextPromo}
+                                                        loop={false}
+                                                    />
                                                 ) : (
                                                     <img src={promo.mediaUrl} alt={promo.title} />
                                                 )}
@@ -429,6 +489,10 @@ export default function Dashboard() {
                                                     <span
                                                         key={index}
                                                         className={`promo-screen__indicator ${index === promoIndex ? 'promo-screen__indicator--active' : ''}`}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setPromoIndex(index);
+                                                        }}
                                                     />
                                                 ))}
                                             </div>

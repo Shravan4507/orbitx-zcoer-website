@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { collection, query, orderBy, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
-import { db } from '../../services/firebase/config';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { db, storage } from '../../services/firebase/config';
 import { useToast } from '../toast/Toast';
 import type { Promotion, PromotionMediaType } from '../../types/user';
 import './PromoManager.css';
@@ -146,7 +147,7 @@ export default function PromoManager({ isOpen, onClose, adminOrbitId }: PromoMan
             return;
         }
 
-        if (!newPromo.fileName) {
+        if (!newPromo.file) {
             showToast('Please select a file', 'error');
             return;
         }
@@ -154,22 +155,32 @@ export default function PromoManager({ isOpen, onClose, adminOrbitId }: PromoMan
         setIsSaving(true);
 
         try {
-            // Store only the file name (no actual upload - Firebase Storage not available yet)
-            // When Storage is enabled, this will be updated to upload and store the actual URL
+            // 1. Create a unique path in Firebase Storage
+            const timestamp = Date.now();
+            const safeFileName = newPromo.fileName.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
+            const storagePath = `promotions/${timestamp}_${safeFileName}`;
+            const storageRef = ref(storage, storagePath);
+
+            // 2. Upload the file
+            const uploadResult = await uploadBytes(storageRef, newPromo.file);
+
+            // 3. Get the permanent download URL
+            const downloadUrl = await getDownloadURL(uploadResult.ref);
+
+            // 4. Save metadata to Firestore
             const promoData: Omit<Promotion, 'id'> = {
                 title: newPromo.title.trim(),
-                mediaUrl: newPromo.previewUrl, // Local preview URL for now
+                mediaUrl: downloadUrl,
                 mediaType: newPromo.mediaType,
                 isActive: true,
                 priority: promotions.length + 1,
                 createdBy: adminOrbitId,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
-                // Store file name for reference
                 fileName: newPromo.fileName,
+                storagePath: storagePath
             };
 
-            // Only add linkUrl if it has a value
             if (newPromo.linkUrl.trim()) {
                 promoData.linkUrl = newPromo.linkUrl.trim();
             }
@@ -181,7 +192,7 @@ export default function PromoManager({ isOpen, onClose, adminOrbitId }: PromoMan
             resetForm();
         } catch (error) {
             console.error('Error creating promotion:', error);
-            showToast('Failed to create promotion', 'error');
+            showToast('Failed to create promotion. Please try again.', 'error');
         } finally {
             setIsSaving(false);
         }
@@ -201,13 +212,26 @@ export default function PromoManager({ isOpen, onClose, adminOrbitId }: PromoMan
     };
 
     const handleDeletePromo = async (promo: Promotion) => {
-        if (!confirm(`Are you sure you want to delete "${promo.title}"?`)) {
+        if (!confirm(`Are you sure you want to delete "${promo.title}"? This will permanently remove the media file.`)) {
             return;
         }
 
         try {
+            // 1. Delete actual file from Firebase Storage if path exists
+            if (promo.storagePath) {
+                try {
+                    const storageRef = ref(storage, promo.storagePath);
+                    await deleteObject(storageRef);
+                } catch (storageError) {
+                    console.error('Error deleting file from storage:', storageError);
+                    // Continue with Firestore deletion even if storage fails 
+                    // (prevents items being stuck if storage reference is lost)
+                }
+            }
+
+            // 2. Delete document from Firestore
             await deleteDoc(doc(db, 'promotions', promo.id));
-            showToast('Promotion deleted', 'success');
+            showToast('Promotion deleted successfully', 'success');
         } catch (error) {
             console.error('Error deleting promotion:', error);
             showToast('Failed to delete promotion', 'error');

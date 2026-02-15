@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import './Footer.css';
 import footerLogo from '../../assets/logo/Logo_without_background.png';
+import zcoerLogo from '../../assets/logo/ZCOER-Logo-White.png';
 import { useRecruitment } from '../../contexts/RecruitmentContext';
 
 export default function Footer() {
@@ -41,9 +42,9 @@ export default function Footer() {
                     </ul>
                 </div>
 
-                <div className="footer-column">
+                <div className="footer-column footer-connect">
                     <h4>Connect</h4>
-                    <ul>
+                    <ul className="footer-links-text">
                         <li><a href="https://www.instagram.com/orbitx_zcoer/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
                         <li><a href="https://www.linkedin.com/company/orbitx-zcoer/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
                         <li><a href="mailto:contact@orbitxzcoer.club">E-mail</a></li>
@@ -68,10 +69,17 @@ export default function Footer() {
                 </div>
             </div>
 
+            <div className="footer-heritage">
+                <a href="https://zcoer.in" target="_blank" rel="noopener noreferrer" className="heritage-link">
+                    <img src={zcoerLogo} alt="ZCOER Logo" className="heritage-logo" />
+                </a>
+                <span className="heritage-text">Official Student Initiative of ZCOER Pune</span>
+            </div>
+
             <div className="footer-bottom">
                 <p>© 2026 OrbitX. All rights reserved.</p>
-                <p className="footer-tagline"><a href="https://www.instagram.com/shravan45x/" target="_blank" rel="noopener noreferrer" className="creator-link">Creator - </a><span className="tooltip-wrapper" data-tooltip="@shravan45x"><a href="https://www.instagram.com/shravan45x/" target="_blank" rel="noopener noreferrer" className="spinning-dollar">$</a></span></p>
+                <p className="footer-tagline"><a href="https://www.instagram.com/shravan45x/" target="_blank" rel="noopener noreferrer" className="creator-link">Creator - </a><span className="tooltip-wrapper" data-tooltip="@shravan45x"><a href="https://www.instagram.com/shravan45x/" target="_blank" rel="noopener noreferrer" className="spinning-dollar-link"><span className="spinning-dollar">$</span>hrvan</a></span></p>
             </div>
-        </footer>
+        </footer >
     );
 }

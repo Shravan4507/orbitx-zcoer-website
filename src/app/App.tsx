@@ -1,10 +1,12 @@
 import './App.css'
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
 import AdaptiveGalaxy from '../components/background/AdaptiveGalaxy'
 import Navbar from '../components/layout/Navbar'
 import MobileNav from '../components/layout/MobileNav'
 import MobileHeader from '../components/layout/MobileHeader'
 import LoginButton from '../components/layout/LoginButton'
+import PageTransition from '../components/effects/PageTransition'
 import Home from '../pages/home/Home'
 import About from '../pages/About'
 import Events from '../pages/Events'
@@ -46,72 +48,83 @@ function JoinRoute() {
   return <Join />;
 }
 
-function AppContent() {
+function AnimatedRoutes() {
+  const location = useLocation();
+
   return (
-    <HashRouter>
-      <AdaptiveGalaxy />
-      <ScrollToTop />
-      <BackButton />
-      <Navbar />
-      <MobileHeader />
-      <LoginButton />
-      <Routes>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
         {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/events" element={<Events />} />
-        <Route path="/members" element={<Members />} />
-        <Route path="/join" element={<JoinRoute />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/merch" element={<Merch />} />
+        <Route path="/" element={<PageTransition><Home /></PageTransition>} />
+        <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+        <Route path="/events" element={<PageTransition><Events /></PageTransition>} />
+        <Route path="/members" element={<PageTransition><Members /></PageTransition>} />
+        <Route path="/join" element={<PageTransition><JoinRoute /></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="/merch" element={<PageTransition><Merch /></PageTransition>} />
 
         {/* Auth Routes - Redirect to dashboard if already logged in */}
         <Route path="/login" element={
           <PublicRoute>
-            <Login />
+            <PageTransition><Login /></PageTransition>
           </PublicRoute>
         } />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/signup" element={<PageTransition><Signup /></PageTransition>} />
+        <Route path="/forgot-password" element={<PageTransition><ForgotPassword /></PageTransition>} />
 
         {/* Admin Setup - URL only access (no frontend link) */}
-        <Route path="/admin-setup" element={<AdminSetup />} />
+        <Route path="/admin-setup" element={<PageTransition><AdminSetup /></PageTransition>} />
 
         {/* Protected Routes - Require authentication */}
         <Route path="/user-dashboard" element={
           <ProtectedRoute>
-            <Dashboard />
+            <PageTransition><Dashboard /></PageTransition>
           </ProtectedRoute>
         } />
 
         {/* Admin Protected Routes */}
         <Route path="/manage-user-applications" element={
           <ProtectedRoute>
-            <ApplicationsManager />
+            <PageTransition><ApplicationsManager /></PageTransition>
           </ProtectedRoute>
         } />
         <Route path="/manage-user-queries" element={
           <ProtectedRoute>
-            <ManageQueries />
+            <PageTransition><ManageQueries /></PageTransition>
           </ProtectedRoute>
         } />
         <Route path="/manage-merch-orders" element={
           <ProtectedRoute>
-            <MerchOrdersManager />
+            <PageTransition><MerchOrdersManager /></PageTransition>
           </ProtectedRoute>
         } />
         <Route path="/manage-merch" element={
           <ProtectedRoute>
-            <MerchManager />
+            <PageTransition><MerchManager /></PageTransition>
           </ProtectedRoute>
         } />
         <Route path="/manage-members" element={
           <ProtectedRoute>
-            <ManageMembers />
+            <PageTransition><ManageMembers /></PageTransition>
           </ProtectedRoute>
         } />
-
       </Routes>
+    </AnimatePresence>
+  );
+}
+
+function AppContent() {
+  return (
+    <HashRouter>
+      <AdaptiveGalaxy />
+      <ScrollToTop />
+      <div className="desktop-only-back-button">
+        <BackButton />
+      </div>
+      <Navbar />
+      <MobileHeader />
+      <LoginButton />
+      <AnimatedRoutes />
       <MobileNav />
     </HashRouter>
   );

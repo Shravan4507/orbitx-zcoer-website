@@ -1,0 +1,307 @@
+.staggered-menu-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 40;
+    pointer-events: none;
+}
+
+.staggered-menu-wrapper.fixed-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1002;
+    /* Match top nav */
+    overflow: hidden;
+}
+
+.staggered-menu-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.25rem;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom-left-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+    pointer-events: auto;
+    z-index: 20;
+    transition: all 0.3s ease;
+}
+
+.staggered-menu-wrapper[data-open] .staggered-menu-header {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: none;
+}
+
+.sm-header-left {
+    display: flex;
+    align-items: center;
+    pointer-events: auto;
+}
+
+.sm-logo {
+    display: flex;
+    align-items: center;
+    user-select: none;
+    pointer-events: auto;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.sm-logo-img {
+    display: block;
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+}
+
+.sm-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    font-weight: 500;
+    line-height: 1;
+    overflow: visible;
+    pointer-events: auto;
+    padding: 10px;
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+}
+
+.sm-toggle-textWrap {
+    display: none;
+}
+
+.sm-icon {
+    position: relative;
+    width: 24px;
+    height: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+.sm-icon-line {
+    width: 100%;
+    height: 2px;
+    background-color: currentColor;
+    border-radius: 4px;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+.sm-icon-line-1 {
+    transform-origin: center;
+}
+
+.sm-icon-line-2 {
+    transform-origin: center;
+}
+
+.sm-icon-line-3 {
+    transform-origin: center;
+}
+
+.staggered-menu-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.98);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    display: flex;
+    flex-direction: column;
+    padding: 8rem 2rem 5rem;
+    overflow-y: auto;
+    z-index: 10;
+    pointer-events: auto;
+}
+
+.sm-prelayers {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.sm-prelayer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    transform: translateX(0);
+}
+
+.sm-panel-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.sm-panel-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.sm-panel-itemWrap {
+    position: relative;
+    overflow: hidden;
+    line-height: 1.1;
+}
+
+.sm-panel-item {
+    position: relative;
+    color: #fff;
+    font-weight: 800;
+    font-size: 3rem;
+    cursor: pointer;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.sm-panel-itemLabel {
+    display: inline-block;
+    will-change: transform;
+}
+
+.sm-panel-item:hover {
+    color: var(--sm-accent, #a855f7);
+}
+
+.sm-panel-list[data-numbering] .sm-panel-item::after {
+    counter-increment: smItem;
+    content: counter(smItem, decimal-leading-zero);
+    position: absolute;
+    top: 0.1em;
+    right: -1.5em;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--sm-accent, #a855f7);
+    letter-spacing: 0;
+    pointer-events: none;
+    opacity: var(--sm-num-opacity, 0);
+}
+
+.sm-socials {
+    margin-top: auto;
+    padding-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.sm-socials-title {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.sm-socials-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+}
+
+.sm-socials-link {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.sm-socials-link:hover {
+    color: var(--sm-accent, #a855f7);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+    .sm-panel-item {
+        font-size: 2.5rem;
+    }
+}
+
+.sm-menu-signature {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+    opacity: 1;
+}
+
+.sm-signature-link {
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+    transition: none;
+}
+
+.sm-signature-link:hover {
+    transform: none;
+    opacity: 1;
+}
+
+.sm-signature-logo {
+    height: 40px;
+    width: auto;
+    filter: brightness(0) invert(1);
+}
+
+.sm-signature-text {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
